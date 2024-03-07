@@ -1,0 +1,50 @@
+<html>
+    <head>
+        <link type="text/css" rel="stylesheet" href="static/index_css.css"/>
+        <title>CALI - Spanish Linguistic proficiency portal</title>
+        <script type="text/js">
+        $(function() {
+            $('a#corpus_link').on('click', function(e) {
+                console.log('entered');
+                document.getElementById('corpusLinks')[0].style.display = 'block';
+            });
+          });
+        </script>
+    </head>
+    <body>
+        <div class="app">
+            <div class="header">
+                <b>A Linguistic Portal to Spanish in Proficiency</b>
+                &nbsp;&nbsp;&nbsp;
+                    <div class="dropdown">
+                        <button class="dropbtn">Home</button>
+                    </div>
+                    <div class="dropdown">
+                        <button class="dropbtn">Corpus</button>
+                        <div class="dropdown-content">
+                            <a href="#">Teachers and Learners</a>
+                            <a href="#">Researchers</a>
+                            <a href="#">Analyze your texts</a>
+                            <a href="#">Add to Corpus</a>
+                          </div>
+                    </div>
+                    <div class="dropdown">
+                        <button class="dropbtn">Tutorials</button>
+                    </div>
+                    <div class="dropdown">
+                        <button class="dropbtn">Readability</button>
+                        <div class="dropdown-content">
+                            <a href="#">What is readability?</a>
+                            <a href="#">How is readability calculated?</a>
+                            <a href="#">Reading and L2 Learning</a>
+                          </div>
+                    </div>
+
+
+            </div>
+        </div>
+        
+              
+      
+    </body>
+</html>

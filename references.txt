@@ -1,0 +1,12 @@
+https://stackoverflow.com/questions/48000690/restricting-html-file-input-to-accept-only-txt-and-not-csv-in-chrome
+https://www.geeksforgeeks.org/how-to-upload-file-in-python-flask/
+https://www.w3schools.com/tags/att_form_enctype.asp
+https://www.w3schools.com/howto/howto_css_dropdown.asp
+https://www.w3schools.com/css/css_navbar_horizontal.asp
+https://www.geeksforgeeks.org/how-to-place-two-div-side-by-side-of-the-same-height-using-css/
+https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_two_columns
+https://stackoverflow.com/questions/30056622/how-to-iterate-over-a-list-of-list-in-jinja
+https://harishvc.com/2015/04/15/pagination-flask-mongodb/
+https://python-web.teclado.com/section07/lectures/06_jinja2_conditional_statements/
+https://www.geeksforgeeks.org/how-to-create-a-group-of-buttons-with-evenly-space-in-css/
+https://medium.com/@aneesha161994/jinja-template-part-4-understanding-jinja-syntax-include-macro-template-inheritance-raw-output-80b7921112d1#:~:text=html%22%20%25%7D%20tag%20in%20Jinja,code%20reuse%2C%20and%20enhances%20maintainability.

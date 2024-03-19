@@ -2,14 +2,6 @@
     <head>
         <link type="text/css" rel="stylesheet" href="static/index_css.css"/>
         <title>CALI - Spanish Linguistic proficiency portal</title>
-        <script type="text/js">
-        $(function() {
-            $('a#corpus_link').on('click', function(e) {
-                console.log('entered');
-                document.getElementById('corpusLinks')[0].style.display = 'block';
-            });
-          });
-        </script>
     </head>
     <body>
         <div class="app">
@@ -39,9 +31,49 @@
                             <a href="#">Reading and L2 Learning</a>
                           </div>
                     </div>
-
-
+                    <div class="dropdown">
+                        <button class="dropbtn">Contact</button>
+                    </div>
             </div>
+            <div class="row">
+                <div class="column" style="background-color:#aaa;">
+                  <h2>Books</h2>
+                  {%for res in results%}
+                  <tr><td>{{res}}</td></tr>
+                  <br/>
+                  {%endfor%}
+
+                  <p>Books go here..</p>
+                </div>
+                <div class="column2" style="background-color:#bbb;">
+                <form method = "post" action="/changeTab">
+                <div class="flexbox">
+                <div class="dropdown">
+                  <input type="submit" value="Search" name="select_button" class="dropbtn"></input>
+                </div>
+                <div class="dropdown">
+                  <input type="submit" value="Readability" name="select_button" class="dropbtn"></input>
+                </div>
+                <div class="dropdown">
+                  <input type="submit" value="Vocabulary" name="select_button" class="dropbtn"></input>
+                </div>
+                <div class="dropdown">
+                  <input type="submit" value="More_Results" name="select_button" class="dropbtn"></input>
+                </div>
+                </div>
+                  {% if search==True %}
+                  {%include "searchTemplate.html"%}
+                  {%elif readability==True%}
+                  <p>Readability</p>
+                  {%elif vocab==True %}
+                  <p>Vocabulary</p>
+                  {%elif moreresults==True%}
+                  <p>More results</p>
+                  {% endif %}
+                </form>
+
+                </div>
+              </div>
         </div>
         
               

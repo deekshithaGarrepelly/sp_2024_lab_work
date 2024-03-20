@@ -1,3 +1,74 @@
 <html>
-    <b>Find Your Text</b>
+    <head>
+        <link type="text/css" rel="stylesheet" href="static/index_css.css"/>
+        <title>CALI - Spanish Linguistic proficiency portal</title>
+    </head>
+    <div class="searchBlock">
+        <b>Find Your Text</b>
+        <b><p>Search by Title, Author,Keywords</p></b>
+        <button class="accordion" name="show_table_metrics" value="readability_metrics_button">Search by Readability Metrics</button>
+        {%if show_metrics_criteria==True%}
+        <table>
+            <tr>
+                <td>Number of Paragraphs</td>
+                <td><input type="text" name="num_paras"/></td>
+                <td>Number of sentences</td>
+                <td><input type="text" name="num_sents"/></td>
+            </tr>
+            <tr>
+                <td>Number of words</td>
+                <td><input type="text" name="num_words"/></td>
+                <td>Mean length of paragraphs</td>
+                <td><input type="text" name="mean_len_paras"/></td>
+            </tr>
+            <tr>
+                <td>Standard deviation of mean length of paragraphs</td>
+                <td><input type="text" name="std_mlp"/></td>
+                <td>Mean number of words in sentences</td>
+                <td><input type="text" name="mean_num_words_in_sents"/></td>
+            </tr>
+            <tr>
+                <td>Standard deviation of mean length of sentences</td>
+                <td><input type="text" name="std_mls"/></td>
+                <td>Mean number of syllables in words</td>
+                <td><input type="text" name="mean_num_sylls"/></td>
+            </tr>
+            <tr>
+                <td>Standard deviation of mean number of syllables</td>
+                <td><input type="text" name="std_mean_sylls"/></td>
+                <td>Mean number of letters in words</td>
+                <td><input type="text" name="mean_num_letters"/></td>
+            </tr>
+            <tr>
+                <td>Standard deviation of mean number of letters in words</td>
+                <td><input type="text" name="std_mean_letters_in_words"/></td>
+                <td>Noun overlap adjacent</td>
+                <td><input type="text" name="noun_overlap_adj"/></td>
+            </tr>
+            <tr>
+                <td>Noun overlap global</td>
+                <td><input type="text" name="noun_overlap_global"/></td>
+                <td>Content word overlap adjacent</td>
+                <td><input type="text" name="cwr_overlap_adj"/></td>
+            </tr>
+            <tr>
+                <td>Content word overlap global</td>
+                <td><input type="text" name="cwr_overlap_global"/></td>
+                <td>Argument overlap adjacent</td>
+                <td><input type="text" name="arg_overlap_adj"/></td>
+            </tr>
+            <tr>
+                <td>Argument overlap global</td>
+                <td><input type="text" name="arg_overlap_global"/></td>
+                <td>Local stem overlap</td>
+                <td><input type="text" name="local_stem_overlap"/></td>
+            </tr>
+        </table>
+        {% endif %}
+    </div>
+    {%include "searchTextInfo.html"%}
+    {%include "searchLanguageCritera.html"%}
+
+    </div>
+
 </html>

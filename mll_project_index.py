@@ -13,6 +13,9 @@ show_search = True
 show_readability = False
 show_vocab = False
 show_more_results = False
+metrics_criteria = False
+text_info_search = False
+lang_info_search = False
 #default app routing
 @app.route('/')
 def homepage():
@@ -27,7 +30,7 @@ def homepage():
        results.append(x['name'])'''
   except Exception as e:
     print(e)
-  return render_template('index.html',results = [],search = show_search,readability = show_readability,vocab = show_vocab, moreresults = show_more_results)
+  return render_template('index.html',results = [],search = show_search,readability = show_readability,vocab = show_vocab, moreresults = show_more_results,show_metrics_criteria = metrics_criteria,show_text_info=text_info_search,show_lang_info=lang_info_search)
 
 @app.route('/collect_file_data',methods=['POST','GET'])
 def collect_file_data():
@@ -46,31 +49,41 @@ def changeTab():
       global show_readability
       global show_vocab
       global show_more_results
-      if request.form['select_button'] == 'Search':
-        print('entered search')
-        show_search = True
-        show_readability = False
-        show_vocab = False
-        show_more_results = False
-      elif request.form['select_button'] == 'Readability':
-        print('entered readability')
-        show_search = False
-        show_readability = True
-        show_vocab = False
-        show_more_results = False
-      elif request.form['select_button'] == 'Vocabulary':
-        print('entered vocab')
-        show_search = False
-        show_readability = False
-        show_vocab = True
-        show_more_results = False
-      elif request.form['select_button'] == 'More_Results':
-        print('entered more')
-        show_search = False
-        show_readability = False
-        show_vocab = False
-        show_more_results = True
-  return render_template('index.html',results = [],search=show_search,readability =show_readability,vocab =show_vocab, moreresults =show_more_results)
+      global metrics_criteria
+      global text_info_search
+      global lang_info_search
+      if 'select_button' in request.form and request.form['select_button']!=None:
+        if request.form['select_button'] == 'Search':
+          print('entered search')
+          show_search = True
+          show_readability = False
+          show_vocab = False
+          show_more_results = False
+        elif request.form['select_button'] == 'Readability':
+          print('entered readability')
+          show_search = False
+          show_readability = True
+          show_vocab = False
+          show_more_results = False
+        elif request.form['select_button'] == 'Vocabulary':
+          print('entered vocab')
+          show_search = False
+          show_readability = False
+          show_vocab = True
+          show_more_results = False
+        elif request.form['select_button'] == 'More_Results':
+          print('entered more')
+          show_search = False
+          show_readability = False
+          show_vocab = False
+          show_more_results = True
+      elif 'show_table_metrics' in request.form and request.form['show_table_metrics']!=None and request.form['show_table_metrics']=='readability_metrics_button':
+        metrics_criteria = not(metrics_criteria)
+      elif 'show_table_text_info' in request.form and request.form['show_table_text_info']!=None and request.form['show_table_text_info']=='text_info_button':
+        text_info_search = not(text_info_search)
+      elif 'show_table_lang_criteria' in request.form and request.form['show_table_lang_criteria']!=None and request.form['show_table_lang_criteria']=='lang_criteria_button':
+        lang_info_search = not(lang_info_search)
+  return render_template('index.html',results = [],search=show_search,readability =show_readability,vocab =show_vocab, moreresults =show_more_results, show_metrics_criteria = metrics_criteria,show_text_info=text_info_search,show_lang_info=lang_info_search)
 
          
 

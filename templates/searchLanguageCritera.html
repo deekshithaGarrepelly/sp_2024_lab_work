@@ -1,0 +1,28 @@
+<html>
+    <head>
+        <link type="text/css" rel="stylesheet" href="static/index_css.css"/>
+        <title>CALI - Spanish Linguistic proficiency portal</title>
+    </head>
+    <button class="accordion" name="show_table_lang_criteria" value="lang_criteria_button">Search by Language Criteria</button>
+    {% if show_lang_info==True %}
+    <table>
+        <tr>
+            <td>Percentage of words that are in top 1000-10000 most frequently used words in spanish</td>
+            <td><input type="text" name="top_frequent_words"/></td>
+        </tr>
+        <tr>
+            <td>Percentage of verbs in past tense</td>
+            <td><input type="text" name="percent_past_verbs"/></td>
+        </tr>
+        <tr>
+            <td>Percentage of verbs in present tense</td>
+            <td><input type="text" name="percent_present_verbs"/></td>
+        </tr>
+        <tr>
+            <td>Percentage of verbs in future tense</td>
+            <td><input type="text" name="percent_future_verbs"/></td>
+        </tr>
+    </table>
+    {% endif %}
+
+</html>

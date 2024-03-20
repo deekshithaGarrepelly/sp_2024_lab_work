@@ -10,3 +10,4 @@ https://harishvc.com/2015/04/15/pagination-flask-mongodb/
 https://python-web.teclado.com/section07/lectures/06_jinja2_conditional_statements/
 https://www.geeksforgeeks.org/how-to-create-a-group-of-buttons-with-evenly-space-in-css/
 https://medium.com/@aneesha161994/jinja-template-part-4-understanding-jinja-syntax-include-macro-template-inheritance-raw-output-80b7921112d1#:~:text=html%22%20%25%7D%20tag%20in%20Jinja,code%20reuse%2C%20and%20enhances%20maintainability.
+https://www.w3schools.com/howto/howto_js_accordion.asp

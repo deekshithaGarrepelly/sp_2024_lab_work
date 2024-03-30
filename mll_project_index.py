@@ -20,38 +20,38 @@ lang_info_search = False
 title_keyword_search = False
 form_errors = ''
 has_errors = False
-numparas = None
+numparas = ""
 author = ""
 book_title = ""
 text_keywords = ""
-num_sents = None
-num_words = None
-mean_len_paras = None
-std_mlp = None
-mean_num_words_in_sents = None
-std_mls = None
-mean_num_sylls = None
-std_mean_sylls = None
-mean_num_letters = None
-std_mean_letters_in_words = None
-noun_overlap_adj = None
-noun_overlap_global = None
-cwr_overlap_adj = None
-cwr_overlap_global = None
+num_sents = ""
+num_words = ""
+mean_len_paras = ""
+std_mlp = ""
+mean_num_words_in_sents = ""
+std_mls = ""
+mean_num_sylls = ""
+std_mean_sylls = ""
+mean_num_letters = ""
+std_mean_letters_in_words = ""
+noun_overlap_adj = ""
+noun_overlap_global = ""
+cwr_overlap_adj = ""
+cwr_overlap_global = ""
 arg_overlap_adj = None
-arg_overlap_global = None
-local_stem_overlap = None
+arg_overlap_global = ""
+local_stem_overlap = ""
 genre = ""
 text_type = ""
 text_len = None
 authentic_or_simplified = []
 authentic = False
 simplified = False
-top_frequent_words_1000 = None
-top_frequent_words_2000 = None
-top_frequent_words_3000 = None
-top_frequent_words_4000 = None
-top_frequent_words_5000 = None
+top_frequent_words_1000 = ""
+top_frequent_words_2000 = ""
+top_frequent_words_3000 = ""
+top_frequent_words_4000 = ""
+top_frequent_words_5000 = ""
 #default app routing
 @app.route('/')
 def homepage():
@@ -141,63 +141,63 @@ def changeTab():
         author = request.form['author']
       if 'text_keywords' in request.form and request.form['text_keywords']!=None:
         text_keywords = request.form['text_keywords']
-      if 'num_sents' in request.form and request.form['num_sents']!=None:
+      if 'num_sents' in request.form:
         num_sents = request.form['num_sents']
-      if 'num_words' in request.form and request.form['num_words']!=None:
+      if 'num_words' in request.form:
         num_words = request.form['num_words']
-      if 'mean_len_paras' in request.form and request.form['mean_len_paras']!=None:
+      if 'mean_len_paras' in request.form:
         mean_len_paras = request.form['mean_len_paras']
-      if 'std_mlp' in request.form and request.form['std_mlp']!=None:
+      if 'std_mlp' in request.form:
         std_mlp = request.form['std_mlp']
-      if 'mean_num_words_in_sents' in request.form and request.form['mean_num_words_in_sents']!=None:
+      if 'mean_num_words_in_sents' in request.form:
         mean_num_words_in_sents = request.form['mean_num_words_in_sents']
-      if 'std_mls' in request.form and request.form['std_mls']!=None:
+      if 'std_mls' in request.form:
         std_mls = request.form['std_mls']
-      if 'mean_num_sylls' in request.form and request.form['mean_num_sylls']!=None:
+      if 'mean_num_sylls' in request.form:
         mean_num_sylls = request.form['mean_num_sylls']
-      if 'std_mean_sylls' in request.form and request.form['std_mean_sylls']!=None:
+      if 'std_mean_sylls' in request.form:
         std_mean_sylls = request.form['std_mean_sylls']
-      if 'mean_num_letters' in request.form and request.form['mean_num_letters']!=None:
+      if 'mean_num_letters' in request.form:
         mean_num_letters = request.form['mean_num_letters']
-      if 'std_mean_letters_in_words' in request.form and request.form['std_mean_letters_in_words']!=None:
+      if 'std_mean_letters_in_words' in request.form:
         std_mean_letters_in_words = request.form['std_mean_letters_in_words']
-      if 'noun_overlap_adj' in request.form and request.form['noun_overlap_adj']!=None:
+      if 'noun_overlap_adj' in request.form:
         noun_overlap_adj = request.form['noun_overlap_adj']
-      if 'noun_overlap_global' in request.form and request.form['noun_overlap_global']!=None:
+      if 'noun_overlap_global' in request.form:
         noun_overlap_global = request.form['noun_overlap_global']
-      if 'cwr_overlap_adj' in request.form and request.form['cwr_overlap_adj']!=None:
+      if 'cwr_overlap_adj' in request.form:
         cwr_overlap_adj = request.form['cwr_overlap_adj']
-      if 'cwr_overlap_global' in request.form and request.form['cwr_overlap_global']!=None:
+      if 'cwr_overlap_global' in request.form:
         cwr_overlap_global = request.form['cwr_overlap_global']
-      if 'arg_overlap_adj' in request.form and request.form['arg_overlap_adj']!=None:
+      if 'arg_overlap_adj' in request.form:
         arg_overlap_adj = request.form['arg_overlap_adj']
-      if 'arg_overlap_global' in request.form and request.form['arg_overlap_global']!=None:
+      if 'arg_overlap_global' in request.form:
         arg_overlap_global = request.form['arg_overlap_global']
-      if 'local_stem_overlap' in request.form and request.form['local_stem_overlap']!=None:
+      if 'local_stem_overlap' in request.form:
         local_stem_overlap = request.form['local_stem_overlap']
-      if 'genre' in request.form and request.form['genre']!=None:
+      if 'genre' in request.form:
         genre = request.form['genre']
-      if 'text_type' in request.form and request.form['text_type']!=None:
+      if 'text_type' in request.form:
         text_type = request.form['text_type']
-      if 'text_len' in request.form and request.form['text_len']!=None:
+      if 'text_len' in request.form:
         text_len = request.form['text_len']
-      if 'authentic_or_simplified' in request.form and request.form['authentic_or_simplified']!=None:
+      if 'authentic_or_simplified' in request.form:
         checked_values = request.form.getlist('authentic_or_simplified')
         if 'authentic' in checked_values:
           authentic = True
         if 'simplified' in checked_values:
           simplified = True 
-      if 'top_frequent_words_1000' in request.form and request.form['top_frequent_words_1000']!=None:
+      if 'top_frequent_words_1000' in request.form:
         top_frequent_words_1000 = request.form['top_frequent_words_1000']
-      if 'top_frequent_words_2000' in request.form and request.form['top_frequent_words_2000']!=None:
+      if 'top_frequent_words_2000' in request.form:
         top_frequent_words_2000 = request.form['top_frequent_words_2000']
-      if 'top_frequent_words_3000' in request.form and request.form['top_frequent_words_3000']!=None:
+      if 'top_frequent_words_3000' in request.form:
         top_frequent_words_3000 = request.form['top_frequent_words_3000']
-      if 'top_frequent_words_4000' in request.form and request.form['top_frequent_words_4000']!=None:
+      if 'top_frequent_words_4000' in request.form:
         top_frequent_words_4000 = request.form['top_frequent_words_4000']
-      if 'top_frequent_words_5000' in request.form and request.form['top_frequent_words_5000']!=None:
+      if 'top_frequent_words_5000' in request.form:
         top_frequent_words_5000 = request.form['top_frequent_words_5000']
-      if 'select_button' in request.form and request.form['select_button']!=None:
+      if 'select_button' in request.form:
         if request.form['select_button'] == 'Search':
           print('entered search')
           show_search = True

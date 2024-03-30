@@ -90,23 +90,31 @@
     float: left;
     width: 45%;
     padding: 10px;
-    height: 100%;
-    overflow-y: scroll;
+    height: 100vh;
+    position: relative;
+    display: block;
 }
   
   /* Clear floats after the columns */
 .row {
-    display: table;
+    display: flex;
     height: 100%;
-    overflow-y: scroll;
+    overflow: scroll;
 }
+
+/*.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}*/
 
 .column2 {
     float: right;
     padding-right: 50px;
     width: 50%;
-    height: 100%; 
-    overflow-y: scroll;
+    height: 100vh; 
+    position: relative;
+    display: block;
 }
 
 .flexbox{
@@ -119,7 +127,7 @@
 }
 
 .searchBlock{
-  top:10%;
+  margin-top:1%;
 }
 
 .accordion {
@@ -132,6 +140,7 @@
   border: none;
   outline: none;
   transition: 0.4s;
+  position: relative;
 }
 
 .active, .accordion:hover {
@@ -142,9 +151,34 @@
   padding: 0 18px;
   background-color: white;
   display: none;
+  overflow: hidden;
+  max-height: fit-content;
+}
+.criteria_block{
   overflow: scroll;
 }
 
+.criteria_block_1{
+  overflow: scroll;
+}
+
+.search_button{
+  margin-left: 40%;
+  margin-top: 2%;
+  position: relative;
+}
+
+body{
+  overflow: scroll;
+  height: 100vh;
+  position: relative;
+}
+
+@media screen and (max-width: 600px) {
+  .column {
+    width: 100%;
+  }
+}
 
 
 

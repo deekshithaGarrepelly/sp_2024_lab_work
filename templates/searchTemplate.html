@@ -4,64 +4,67 @@
         <title>CALI - Spanish Linguistic proficiency portal</title>
     </head>
     <div class="searchBlock">
+        {% if form_error==True %}
+        <p class="error">{{error}}</p>
+        {% endif %}
         <b>Find Your Text</b>
-        <b><p>Search by Title, Author,Keywords</p></b>
-        <button class="accordion" name="show_table_metrics" value="readability_metrics_button">Search by Readability Metrics</button>
+        {%include "searchTitleKeyWords.html"%}
+        <button class="accordion" name="show_table_metrics" id="show_table_metrics" value="readability_metrics_button">Search by Readability Metrics</button>
         {%if show_metrics_criteria==True%}
-        <table>
+        <table class="criteria_block">
             <tr>
                 <td>Number of Paragraphs</td>
-                <td><input type="text" name="num_paras"/></td>
+                <td><input type="number" name="num_paras" id="num_paras" value="{{numparas}}"/></td>
                 <td>Number of sentences</td>
-                <td><input type="text" name="num_sents"/></td>
+                <td><input type="number" name="num_sents" id="num_sents" value="{{num_sents}}"/></td>
             </tr>
             <tr>
                 <td>Number of words</td>
-                <td><input type="text" name="num_words"/></td>
+                <td><input type="number" name="num_words" id="num_words" value="{{num_words}}"/></td>
                 <td>Mean length of paragraphs</td>
-                <td><input type="text" name="mean_len_paras"/></td>
+                <td><input type="number" name="mean_len_paras" id="mean_len_paras" value="{{mean_len_paras}}"/></td>
             </tr>
             <tr>
                 <td>Standard deviation of mean length of paragraphs</td>
-                <td><input type="text" name="std_mlp"/></td>
+                <td><input type="number" name="std_mlp" id="std_mlp" value="{{std_mlp}}"/></td>
                 <td>Mean number of words in sentences</td>
-                <td><input type="text" name="mean_num_words_in_sents"/></td>
+                <td><input type="number" name="mean_num_words_in_sents" id="mean_num_words_in_sents" value="{{mean_num_words_in_sents}}"/></td>
             </tr>
             <tr>
                 <td>Standard deviation of mean length of sentences</td>
-                <td><input type="text" name="std_mls"/></td>
+                <td><input type="number" name="std_mls" id="std_mls" value="{{std_mls}}"/></td>
                 <td>Mean number of syllables in words</td>
-                <td><input type="text" name="mean_num_sylls"/></td>
+                <td><input type="number" name="mean_num_sylls" id="mean_num_sylls" value="{{mean_num_sylls}}"/></td>
             </tr>
             <tr>
                 <td>Standard deviation of mean number of syllables</td>
-                <td><input type="text" name="std_mean_sylls"/></td>
+                <td><input type="number" name="std_mean_sylls" id="std_mean_sylls" value="{{std_mean_sylls}}"/></td>
                 <td>Mean number of letters in words</td>
-                <td><input type="text" name="mean_num_letters"/></td>
+                <td><input type="number" name="mean_num_letters" id="mean_num_letters" value="{{mean_num_letters}}"/></td>
             </tr>
             <tr>
                 <td>Standard deviation of mean number of letters in words</td>
-                <td><input type="text" name="std_mean_letters_in_words"/></td>
+                <td><input type="number" name="std_mean_letters_in_words" id="std_mean_letters_in_words" value="{{std_mean_letters_in_words}}"/></td>
                 <td>Noun overlap adjacent</td>
-                <td><input type="text" name="noun_overlap_adj"/></td>
+                <td><input type="number" name="noun_overlap_adj" id="noun_overlap_adj" value="{{noun_overlap_adj}}"/></td>
             </tr>
             <tr>
                 <td>Noun overlap global</td>
-                <td><input type="text" name="noun_overlap_global"/></td>
+                <td><input type="number" name="noun_overlap_global" value="{{noun_overlap_global}}"/></td>
                 <td>Content word overlap adjacent</td>
-                <td><input type="text" name="cwr_overlap_adj"/></td>
+                <td><input type="number" name="cwr_overlap_adj" value="{{cwr_overlap_adj}}"/></td>
             </tr>
             <tr>
                 <td>Content word overlap global</td>
-                <td><input type="text" name="cwr_overlap_global"/></td>
+                <td><input type="number" name="cwr_overlap_global" value="{{cwr_overlap_global}}"/></td>
                 <td>Argument overlap adjacent</td>
-                <td><input type="text" name="arg_overlap_adj"/></td>
+                <td><input type="number" name="arg_overlap_adj" value="{{arg_overlap_adj}}"/></td>
             </tr>
             <tr>
                 <td>Argument overlap global</td>
-                <td><input type="text" name="arg_overlap_global"/></td>
+                <td><input type="number" name="arg_overlap_global" value="{{arg_overlap_global}}"/></td>
                 <td>Local stem overlap</td>
-                <td><input type="text" name="local_stem_overlap"/></td>
+                <td><input type="number" name="local_stem_overlap" value="{{local_stem_overlap}}"/></td>
             </tr>
         </table>
         {% endif %}
@@ -69,6 +72,8 @@
     {%include "searchTextInfo.html"%}
     {%include "searchLanguageCritera.html"%}
 
+    <div class="search_button">
+    <button type="submit" name="search_texts" value="search_texts_button">Search texts</button>
     </div>
 
 </html>

@@ -5,22 +5,26 @@
     </head>
     <button class="accordion" name="show_table_lang_criteria" value="lang_criteria_button">Search by Language Criteria</button>
     {% if show_lang_info==True %}
-    <table>
+    <table class="criteria_block">
         <tr>
-            <td>Percentage of words that are in top 1000-10000 most frequently used words in spanish</td>
-            <td><input type="text" name="top_frequent_words"/></td>
+            <td>Percentage of words that are in top 1000 most frequently used words in spanish</td>
+            <td><input type="number" name="top_frequent_words_1000" value="{{request.form.top_frequent_words_1000}}"/></td>
         </tr>
         <tr>
-            <td>Percentage of verbs in past tense</td>
-            <td><input type="text" name="percent_past_verbs"/></td>
+            <td>Percentage of words that are in top 2000 most frequently used words in spanish</td>
+            <td><input type="number" name="top_frequent_words_2000" value="{{request.form.top_frequent_words_2000}}"/></td>
         </tr>
         <tr>
-            <td>Percentage of verbs in present tense</td>
-            <td><input type="text" name="percent_present_verbs"/></td>
+            <td>Percentage of words that are in top 3000 most frequently used words in spanish</td>
+            <td><input type="number" name="top_frequent_words_3000" value="{{request.form.top_frequent_words_3000}}"/></td>
         </tr>
         <tr>
-            <td>Percentage of verbs in future tense</td>
-            <td><input type="text" name="percent_future_verbs"/></td>
+            <td>Percentage of words that are in top 4000 most frequently used words in spanish</td>
+            <td><input type="number" name="top_frequent_words_4000" value="{{request.form.top_frequent_words_4000}}"/></td>
+        </tr>
+        <tr>
+            <td>Percentage of words that are in top 5000 most frequently used words in spanish</td>
+            <td><input type="number" name="top_frequent_words_5000" value="{{request.form.top_frequent_words_5000}}"/></td>
         </tr>
     </table>
     {% endif %}

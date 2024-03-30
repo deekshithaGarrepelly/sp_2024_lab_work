@@ -6,19 +6,21 @@
           integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
           crossorigin="anonymous"></script>
           <script type="text/javascript">
-           /* $(document).on('click','#show_table_metrics',function(e)
-                          {
-              console.log('hello');
-              e.preventDefault();
-            const block_visible = document.getElementsByClassName('criteria_block_1')[0];
-            console.log(block_visible.style);
-            if(block_visible.style.display=="none"){
-            console.log('entered here');
-            block_visible.style.display="block";
+            function handleChange(event,value)
+            {
+              event.target.value = value;
             }
-            else
-            block_visible.style.display="none";
-            })*/
+            function toggle_block(event,id_str)
+            {
+              event.preventDefault();
+              display_curr = document.getElementsByClassName(id_str)[0].style.display;
+              console.log("entered "+display_curr)
+              if(display_curr == "none")
+              document.getElementsByClassName(id_str+"")[0].style.display = "block";
+              else
+              document.getElementsByClassName(id_str+"")[0].style.display = "none";
+
+            }
           </script>
     </head>
     <body>

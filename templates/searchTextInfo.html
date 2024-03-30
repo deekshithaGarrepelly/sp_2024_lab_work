@@ -3,28 +3,25 @@
         <link type="text/css" rel="stylesheet" href="static/index_css.css"/>
         <title>CALI - Spanish Linguistic proficiency portal</title>
     </head>
-    <button class="accordion" name="show_table_text_info" value="text_info_button">Search by Text Info</button>
-    {% if show_text_info==True %}
-    <table class="criteria_block">
+    <button class="accordion" name="show_table_text_info" value="text_info_button" id="show_table_text_info" onclick="toggle_block(event,'criteria_block_text_info')">Search by Text Info</button>
+    <table class="criteria_block_text_info">
         <tr>
             <td>Genre</td>
-            <td><input type="text" name="genre" value="{{genre}}"/></td>
+            <td><input type="text" name="genre" id="genre" onchange="handleChange(event,value)"/></td>
         </tr>
         <tr>
             <td>Type</td>
-            <td><input type="text" name="text_type" value="{{text_type}}"/></td>
+            <td><input type="text" name="text_type" id="text_type"onchange="handleChange(event,value)"/></td>
         </tr>
         <tr>
             <td>Length</td>
-            <td><input type="number" name="text_len" value="{{text_len}}"/></td>
+            <td><input type="number" name="text_len" id="text_len" onchange="handleChange(event,value)"/></td>
         </tr>
         <tr>
             <td>Authentic</td>
-            <td><input type="checkbox" name="authentic_or_simplified" value="authentic" {% if authentic== True %}checked{% endif %}/></td>
+            <td><input type="checkbox" name="authentic_or_simplified" value="authentic" id="authentic_or_simplified" onchange="handleChange(event,value)"/></td>
             <td>Simplified</td>
-            <td><input type="checkbox" name="authentic_or_simplified" value="simplified" {% if simplified == True %}checked{% endif %}/></td>
+            <td><input type="checkbox" name="authentic_or_simplified" value="simplified" id="authentic_or_simplified" onchange="handleChange(event,value)"/></td>
         </tr>
     </table>
-    {% endif %}
-
 </html>

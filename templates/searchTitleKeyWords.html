@@ -3,22 +3,20 @@
         <link type="text/css" rel="stylesheet" href="static/index_css.css"/>
         <title>CALI - Spanish Linguistic proficiency portal</title>
     </head>
-    <button class="accordion" name="show_title_keyword_button" value="title_keyword_button">Search by Author, Title and Keywords</button>
-    {% if show_title_keyword==True %}
-    <table class="criteria_block">
+    <button class="accordion" name="show_title_keyword_button" value="title_keyword_button" id="show_title_keyword_button" onclick="toggle_block(event,'criteria_block_1')">Search by Author, Title and Keywords</button>
+    <table class="criteria_block_1" id="table1">
         <tr>
             <td>Author</td>
-            <td><input type="text" name="author" maxlength="30" value="{{author}}"/></td>
+            <td><input type="text" name="author" maxlength="30" onchange="handleChange(event,value)"/></td>
         </tr>
         <tr>
             <td>Title</td>
-            <td><input type="text" name="book_title" value="{{book_title}}"/></td>
+            <td><input type="text" name="book_title" onchange="handleChange(event,value)"/></td>
         </tr>
         <tr>
             <td>Keywords</td>
-            <td><input type="text" name="text_keywords" value="{{text_keywords}}"/></td>
+            <td><input type="text" name="text_keywords" onchange="handleChange(event,value)"/></td>
         </tr>
     </table>
-    {% endif %}
 
 </html>

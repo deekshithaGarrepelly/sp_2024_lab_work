@@ -135,11 +135,11 @@ def changeTab():
       global top_frequent_words_3000
       global top_frequent_words_4000
       global top_frequent_words_5000
-      if 'num_paras' in request.form and request.form['num_paras']!=None:
+      if 'num_paras' in request.form:
         numparas = request.form['num_paras']
-      if 'author' in request.form and request.form['author']!=None:
+      if 'author' in request.form:
         author = request.form['author']
-      if 'text_keywords' in request.form and request.form['text_keywords']!=None:
+      if 'text_keywords' in request.form:
         text_keywords = request.form['text_keywords']
       if 'num_sents' in request.form:
         num_sents = request.form['num_sents']

@@ -159,7 +159,18 @@
 }
 
 .criteria_block_1{
-  overflow: scroll;
+  display: none;
+}
+
+.criteria_block_lang{
+  display: none;
+}
+
+.criteria_block_text_info{
+  display: none;
+}
+.criteria_block_metrics{
+  display: none;
 }
 
 .search_button{

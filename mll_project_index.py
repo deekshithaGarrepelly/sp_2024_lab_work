@@ -47,6 +47,11 @@ text_len = None
 authentic_or_simplified = []
 authentic = False
 simplified = False
+top_frequent_words_1000 = None
+top_frequent_words_2000 = None
+top_frequent_words_3000 = None
+top_frequent_words_4000 = None
+top_frequent_words_5000 = None
 #default app routing
 @app.route('/')
 def homepage():
@@ -70,7 +75,9 @@ def homepage():
                          std_mls = std_mls,mean_num_sylls = mean_num_sylls,std_mean_sylls = std_mean_sylls,mean_num_letters = mean_num_letters,
                          std_mean_letters_in_words = std_mean_letters_in_words,noun_overlap_adj=noun_overlap_adj,noun_overlap_global = noun_overlap_global,
                          cwr_overlap_adj = cwr_overlap_adj, cwr_overlap_global = cwr_overlap_global,arg_overlap_adj=arg_overlap_adj,local_stem_overlap=local_stem_overlap,
-                         genre=genre,text_type=text_type,text_len=text_len,authentic=authentic,simplified=simplified
+                         genre=genre,text_type=text_type,text_len=text_len,authentic=authentic,simplified=simplified,
+                         top_frequent_words_1000=top_frequent_words_1000,top_frequent_words_2000=top_frequent_words_2000,top_frequent_words_3000=top_frequent_words_3000,
+                         top_frequent_words_4000=top_frequent_words_4000,top_frequent_words_5000=top_frequent_words_5000
                          )
 
 @app.route('/collect_file_data',methods=['POST','GET'])
@@ -123,6 +130,11 @@ def changeTab():
       global text_len
       global authentic
       global simplified
+      global top_frequent_words_1000
+      global top_frequent_words_2000
+      global top_frequent_words_3000
+      global top_frequent_words_4000
+      global top_frequent_words_5000
       if 'num_paras' in request.form and request.form['num_paras']!=None:
         numparas = request.form['num_paras']
       if 'author' in request.form and request.form['author']!=None:
@@ -173,12 +185,18 @@ def changeTab():
         checked_values = request.form.getlist('authentic_or_simplified')
         if 'authentic' in checked_values:
           authentic = True
-        else:
-          authentic = False
         if 'simplified' in checked_values:
           simplified = True 
-        else:
-          simplified = False
+      if 'top_frequent_words_1000' in request.form and request.form['top_frequent_words_1000']!=None:
+        top_frequent_words_1000 = request.form['top_frequent_words_1000']
+      if 'top_frequent_words_2000' in request.form and request.form['top_frequent_words_2000']!=None:
+        top_frequent_words_2000 = request.form['top_frequent_words_2000']
+      if 'top_frequent_words_3000' in request.form and request.form['top_frequent_words_3000']!=None:
+        top_frequent_words_3000 = request.form['top_frequent_words_3000']
+      if 'top_frequent_words_4000' in request.form and request.form['top_frequent_words_4000']!=None:
+        top_frequent_words_4000 = request.form['top_frequent_words_4000']
+      if 'top_frequent_words_5000' in request.form and request.form['top_frequent_words_5000']!=None:
+        top_frequent_words_5000 = request.form['top_frequent_words_5000']
       if 'select_button' in request.form and request.form['select_button']!=None:
         if request.form['select_button'] == 'Search':
           print('entered search')
@@ -228,7 +246,9 @@ def changeTab():
                          std_mls = std_mls,mean_num_sylls = mean_num_sylls,std_mean_sylls = std_mean_sylls,mean_num_letters = mean_num_letters,
                          std_mean_letters_in_words = std_mean_letters_in_words,noun_overlap_adj=noun_overlap_adj,noun_overlap_global = noun_overlap_global,
                          cwr_overlap_adj = cwr_overlap_adj, cwr_overlap_global = cwr_overlap_global,arg_overlap_adj=arg_overlap_adj,local_stem_overlap=local_stem_overlap,
-                         genre=genre,text_type=text_type,text_len=text_len,authentic=authentic,simplified=simplified
+                         genre=genre,text_type=text_type,text_len=text_len,authentic=authentic,simplified=simplified,
+                         top_frequent_words_1000=top_frequent_words_1000,top_frequent_words_2000=top_frequent_words_2000,top_frequent_words_3000=top_frequent_words_3000,
+                         top_frequent_words_4000=top_frequent_words_4000,top_frequent_words_5000=top_frequent_words_5000
                          )
 
 def validate(request):

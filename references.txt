@@ -13,3 +13,4 @@ https://medium.com/@aneesha161994/jinja-template-part-4-understanding-jinja-synt
 https://www.w3schools.com/howto/howto_js_accordion.asp
 https://flask.palletsprojects.com/en/2.3.x/patterns/flashing/
 https://flask.palletsprojects.com/en/2.3.x/patterns/wtforms/
+https://dev.to/tillsanders/let-s-stop-using-a-za-z-4a0m

@@ -190,6 +190,18 @@ body{
     width: 100%;
   }
 }
+.search_tab{
+  display: block;
+}
+.readability_tab{
+  display: none;
+}
+.vocab_tab{
+  display: none;
+}
+.more_results_tab{
+  display: none;
+}
 
 
 

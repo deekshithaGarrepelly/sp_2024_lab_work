@@ -1,6 +1,7 @@
 <html>
     <head>
         <link type="text/css" rel="stylesheet" href="static/index_css.css"/>
+        <meta charset="UTF-8">
         <title>CALI - Spanish Linguistic proficiency portal</title>
         <script src="https://code.jquery.com/jquery-3.5.1.js"
           integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
@@ -19,7 +20,60 @@
               document.getElementsByClassName(id_str+"")[0].style.display = "block";
               else
               document.getElementsByClassName(id_str+"")[0].style.display = "none";
+            }
+            function validateAndSubmit(event)
+            {
+              event.preventDefault();
+              errors_present = false;
+              error_msg = "";
+              num_fields_entered = 0;
+              console.log("valid method");
+              const author_regex = /[([a-zA-Z]|[à-ü]|[À-Ü]])\s]+/;
+              author_name = document.getElementsByName('author')[0].value;
+              console.log(author_regex.test(author_name));
+              if(author_name!="" && author_regex.test(author_name)==false)
+              error_msg = error_msg.concat("","Author name can only contain uppercase and lowercase letters and spaces");
+              else if(author_name!="" && undefined!=author_name)
+              num_fields_entered = num_fields_entered + 1;
+              title_entered = document.getElementsByName('book_title')[0].value;
+              if(title_entered!="" && author_regex.test(title_entered)==false)
+              error_msg = error_msg.concat("","Title can only contain uppercase and lowercase letters and spaces");
+              else if(title_entered!="" && undefined!=title_entered)
+              num_fields_entered = num_fields_entered + 1;
+              const key_words_regex = /[([a-zA-Z]|[à-ü]|[À-Ü]])\s,]*[([a-zA-Z]|[à-ü]|[À-Ü]])\s]$/;
 
+
+            }
+            function displaySingleTab(event)
+            {
+              if(event.target.name == "Search")
+              {
+                document.getElementsByClassName('search_tab')[0].style.display = "block";
+                document.getElementsByClassName('readability_tab')[0].style.display = "none";
+                document.getElementsByClassName('vocab_tab')[0].style.display = "none";
+                document.getElementsByClassName('more_results_tab')[0].style.display = "none";
+              }
+              else if(event.target.name=="Readability")
+              {
+                document.getElementsByClassName('search_tab')[0].style.display = "none";
+                document.getElementsByClassName('readability_tab')[0].style.display = "block";
+                document.getElementsByClassName('vocab_tab')[0].style.display = "none";
+                document.getElementsByClassName('more_results_tab')[0].style.display = "none";
+              }
+              else if(event.target.name=="Vocabulary")
+              {
+                document.getElementsByClassName('search_tab')[0].style.display = "none";
+                document.getElementsByClassName('readability_tab')[0].style.display = "none";
+                document.getElementsByClassName('vocab_tab')[0].style.display = "block";
+                document.getElementsByClassName('more_results_tab')[0].style.display = "none";
+              }
+              else if(event.target.name=="More_Results")
+              {
+                document.getElementsByClassName('search_tab')[0].style.display = "none";
+                document.getElementsByClassName('readability_tab')[0].style.display = "none";
+                document.getElementsByClassName('vocab_tab')[0].style.display = "none";
+                document.getElementsByClassName('more_results_tab')[0].style.display = "block";
+              }
             }
           </script>
     </head>
@@ -72,31 +126,32 @@
                   <p>Books go here..</p>
                 </div>
                 <div class="column2" style="background-color:#bbb;">
-                <form method = "post" action="/changeTab">
                 <div class="flexbox">
                 <div class="dropdown">
-                  <input type="submit" value="Search" name="select_button" class="dropbtn"></input>
+                  <input type="button" name="Search" value="Search" name="select_button" class="dropbtn" onclick="displaySingleTab(event)"></input>
                 </div>
                 <div class="dropdown">
-                  <input type="submit" value="Readability" name="select_button" class="dropbtn"></input>
+                  <input type="button" name="Readability" value="Readability" name="select_button" class="dropbtn" onclick="displaySingleTab(event)"></input>
                 </div>
                 <div class="dropdown">
-                  <input type="submit" value="Vocabulary" name="select_button" class="dropbtn"></input>
+                  <input type="button" name="Vocabulary" value="Vocabulary" name="select_button" class="dropbtn" onclick="displaySingleTab(event)"></input>
                 </div>
                 <div class="dropdown">
-                  <input type="submit" value="More_Results" name="select_button" class="dropbtn"></input>
+                  <input type="button" name="More_Results" value="More_Results" name="select_button" class="dropbtn" onclick="displaySingleTab(event)"></input>
                 </div>
                 </div>
-                  {% if search==True %}
+                  <div class="search_tab">
                   {%include "searchTemplate.html"%}
-                  {%elif readability==True%}
+                  </div>
+                  <div class="readability_tab">
                   <p>Readability</p>
-                  {%elif vocab==True %}
+                  </div>
+                  <div class="vocab_tab">
                   <p>Vocabulary</p>
-                  {%elif moreresults==True%}
+                  </div>
+                  <div class="more_results_tab">
                   <p>More results</p>
-                  {% endif %}
-                </form>
+                  </div>
 
                 </div>
               </div>

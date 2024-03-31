@@ -2,6 +2,7 @@
     <head>
         <link type="text/css" rel="stylesheet" href="static/index_css.css"/>
         <title>CALI - Spanish Linguistic proficiency portal</title>
+        <meta charset="UTF-8">
     </head>
     <div class="searchBlock">
         {% if form_error==True %}
@@ -71,7 +72,7 @@
     {%include "searchLanguageCritera.html"%}
 
     <div class="search_button">
-    <button type="submit" name="search_texts" value="search_texts_button">Search texts</button>
+    <button type="submit" name="search_texts" value="search_texts_button" id="searchButton" onclick="validateAndSubmit(event)">Search texts</button>
     </div>
 
 </html>

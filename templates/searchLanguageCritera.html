@@ -5,26 +5,26 @@
         <meta charset="UTF-8">
     </head>
     <button class="accordion" name="show_table_lang_criteria" value="lang_criteria_button" id="show_table_lang_criteria" onclick="toggle_block(event,'criteria_block_lang')">Search by Language Criteria</button>
-    <table class="criteria_block_lang">
+    <table class="criteria_block_lang" id="criteria_block_lang">
         <tr>
             <td>Percentage of words that are in top 1000 most frequently used words in spanish</td>
-            <td><input type="number" name="top_frequent_words_1000" id="top_frequent_words_1000" onchange="handleChange(event,value)"/></td>
+            <td><input type="number" name="top_frequent_words_1000" id="top_frequent_words_1000" onchange="handleChange(event,value)" min="0" max="100" onmouseout="isNaN(this.value)?this.value=0:this.value=this.value"/></td>
         </tr>
         <tr>
             <td>Percentage of words that are in top 2000 most frequently used words in spanish</td>
-            <td><input type="number" name="top_frequent_words_2000" id="top_frequent_words_2000" onchange="handleChange(event,value)"/></td>
+            <td><input type="number" name="top_frequent_words_2000" id="top_frequent_words_2000" onchange="handleChange(event,value)" min="0" max="100" onmouseout="isNaN(this.value)?this.value=0:this.value=this.value"/></td>
         </tr>
         <tr>
             <td>Percentage of words that are in top 3000 most frequently used words in spanish</td>
-            <td><input type="number" name="top_frequent_words_3000" id="top_frequent_words_3000" onchange="handleChange(event,value)"/></td>
+            <td><input type="number" name="top_frequent_words_3000" id="top_frequent_words_3000" onchange="handleChange(event,value)" min="0" max="100" onmouseout="isNaN(this.value)?this.value=0:this.value=this.value"/></td>
         </tr>
         <tr>
             <td>Percentage of words that are in top 4000 most frequently used words in spanish</td>
-            <td><input type="number" name="top_frequent_words_4000" id="top_frequent_words_4000" onchange="handleChange(event,value)"/></td>
+            <td><input type="number" name="top_frequent_words_4000" id="top_frequent_words_4000" onchange="handleChange(event,value)" min="0" max="100" onmouseout="isNaN(this.value)?this.value=0:this.value=this.value"/></td>
         </tr>
         <tr>
             <td>Percentage of words that are in top 5000 most frequently used words in spanish</td>
-            <td><input type="number" name="top_frequent_words_5000" id="top_frequent_words_5000" onchange="handleChange(event,value)"/></td>
+            <td><input type="number" name="top_frequent_words_5000" id="top_frequent_words_5000" onchange="handleChange(event,value)" min="0" max="100" onmouseout="isNaN(this.value)?this.value=0:this.value=this.value"/></td>
         </tr>
     </table>
 

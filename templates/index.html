@@ -11,11 +11,14 @@
             {
               event.target.value = value;
             }
+            function handleChange_checkbox(event)
+            {
+              event.target.checked = event.target.checked;
+            }
             function toggle_block(event,id_str)
             {
               event.preventDefault();
               display_curr = document.getElementsByClassName(id_str)[0].style.display;
-              console.log("entered "+display_curr)
               if(display_curr == "none")
               document.getElementsByClassName(id_str+"")[0].style.display = "block";
               else
@@ -26,23 +29,260 @@
               event.preventDefault();
               errors_present = false;
               error_msg = "";
-              num_fields_entered = 0;
-              console.log("valid method");
-              const author_regex = /[([a-zA-Z]|[à-ü]|[À-Ü]])\s]+/;
-              author_name = document.getElementsByName('author')[0].value;
-              console.log(author_regex.test(author_name));
-              if(author_name!="" && author_regex.test(author_name)==false)
-              error_msg = error_msg.concat("","Author name can only contain uppercase and lowercase letters and spaces");
-              else if(author_name!="" && undefined!=author_name)
-              num_fields_entered = num_fields_entered + 1;
-              title_entered = document.getElementsByName('book_title')[0].value;
-              if(title_entered!="" && author_regex.test(title_entered)==false)
-              error_msg = error_msg.concat("","Title can only contain uppercase and lowercase letters and spaces");
-              else if(title_entered!="" && undefined!=title_entered)
-              num_fields_entered = num_fields_entered + 1;
-              const key_words_regex = /[([a-zA-Z]|[à-ü]|[À-Ü]])\s,]*[([a-zA-Z]|[à-ü]|[À-Ü]])\s]$/;
-
-
+              var num_fields_entered = 0;
+              const positive_integer_regex = /^[0-9]+$/u;
+              const author_regex = /\b\p{Letter}\p{Letter}*.*/u;
+              table_1 = document.getElementById('criteria_block_metrics');
+              table_1_rows = table_1.querySelectorAll('tr');
+              table_1_rows.forEach((input)=>{
+                columns = input.childNodes;
+                var fieldname = "";
+                for(var i = 0 ; i < columns.length;i++)
+                {
+                  element = columns[i];
+                  if(undefined!=element.childNodes && element.childNodes.length > 0){
+                    if(undefined == element.childNodes[0].tagName){
+                    fieldname = element.childNodes[0].textContent;
+                    }
+                    else{
+                    value_curr = element.childNodes[0].value;
+                    if(undefined!=value_curr && value_curr!=""){
+                    num_fields_entered = num_fields_entered + 1;
+                    }
+                    if(undefined!=value_curr)
+                    {
+                      if(fieldname=='Number of Paragraphs' || fieldname=='Number of sentences' || fieldname=='Number of words')
+                      {
+                        if(value_curr < 0 || (value_curr!="" && positive_integer_regex.test(value_curr)==false)){
+                          error_string = fieldname+" "+" has to be >=0";
+                          error_msg = error_msg.concat(" ",error_string);
+                        } 
+                      }
+                      else{
+                        if(value_curr < 0)
+                        {
+                          error_string = fieldname+" "+" has to be a positive value";
+                          error_msg = error_msg.concat(" ",error_string);
+                        }
+                      }
+                    }
+                    }
+                  }
+                }
+                });
+              table_2 = document.getElementById('criteria_block_metrics_referntial');
+              table_2_rows = table_2.querySelectorAll('tr');
+              table_2_rows.forEach((input)=>{
+                columns = input.childNodes;
+                var fieldname = "";
+                for(var i = 0 ; i < columns.length;i++)
+                {
+                  element = columns[i];
+                  if(undefined!=element.childNodes && element.childNodes.length > 0){
+                    if(undefined == element.childNodes[0].tagName){
+                    fieldname = element.childNodes[0].textContent;
+                    }
+                    else{
+                    value_curr = element.childNodes[0].value;
+                    if(undefined!=value_curr && value_curr!=""){
+                    num_fields_entered = num_fields_entered + 1;
+                    }
+                    if(undefined!=value_curr)
+                    {
+                        if(value_curr < 0){
+                          error_string = fieldname+" "+" has to be >=0";
+                          error_msg = error_msg.concat(" ",error_string);
+                        } 
+                    }
+                    }
+                  }
+                }
+                });
+                table_3 = document.getElementById('criteria_block_metrics_diversity');
+                table_3_rows = table_3.querySelectorAll('tr');
+                table_3_rows.forEach((input)=>{
+                columns = input.childNodes;
+                var fieldname = "";
+                for(var i = 0 ; i < columns.length;i++)
+                {
+                  element = columns[i];
+                  if(undefined!=element.childNodes && element.childNodes.length > 0){
+                    if(undefined == element.childNodes[0].tagName){
+                    fieldname = element.childNodes[0].textContent;
+                    }
+                    else{
+                    value_curr = element.childNodes[0].value;
+                    if(undefined!=value_curr && value_curr!=""){
+                    num_fields_entered = num_fields_entered + 1;
+                    }
+                    if(undefined!=value_curr)
+                    {
+                        if(fieldname=='Type token ratio')
+                        {
+                          if(value_curr < 0 || value_curr > 1)
+                          {
+                            error_msg = error_msg.concat(" ","Type token ratio has to be between 0 and 1");
+                          }
+                        }
+                        else if(fieldname=='Average Minimium Word frequency')
+                        {
+                          if(value_curr < 0 || (value_curr!="" && positive_integer_regex.test(value_curr)==false))
+                          {
+                            error_msg = error_msg.concat(" ","Average minimum word frequency has to be an integer >=0");
+                          }
+                        }
+                        else{
+                          if(value_curr < 0)
+                          {
+                            error_msg = error_msg.concat(" ",fieldname+" has to be >=0");
+                          }
+                        }
+                    }
+                    }
+                  }
+                }
+                });
+                table_4 = document.getElementById('criteria_block_metrics_syn_complexity');
+                table_4_rows = table_4.querySelectorAll('tr');
+                table_4_rows.forEach((input)=>{
+                columns = input.childNodes;
+                var fieldname = "";
+                for(var i = 0 ; i < columns.length;i++)
+                {
+                  element = columns[i];
+                  if(undefined!=element.childNodes && element.childNodes.length > 0){
+                    if(undefined == element.childNodes[0].tagName){
+                    fieldname = element.childNodes[0].textContent;
+                    }
+                    else{
+                    value_curr = element.childNodes[0].value;
+                    if(undefined!=value_curr && value_curr!=""){
+                    num_fields_entered = num_fields_entered + 1;
+                    }
+                    if(undefined!=value_curr)
+                    {
+                        if(fieldname!='Flesch Reading Ease' && fieldname!='Flesch Kincaid Reading Level')
+                        {
+                          if(value_curr < 0)
+                          {
+                            error_msg = error_msg.concat(" ",fieldname+" has to be >0");
+                          }
+                        }
+                        else{
+                          if(fieldname=='Flesch Reading Ease')
+                          {
+                            if(value_curr < 0 || value_curr > 100)
+                            error_msg = error_msg.concat(" ","Flesch Reading ease has to be between 0 and 100 (inclusive)");
+                          }
+                          else if(fieldname=='Flesch Kincaid Reading Level')
+                          {
+                            if(value_curr < 0 || value_curr > 18)
+                            error_msg = error_msg.concat(" ","Flesch Kincaid Reading Level has to be between 0 and 18 (inclusive)");
+                          }
+                        }
+                    }
+                    }
+                  }
+                }
+                });
+                table_5 = document.getElementById('criteria_block_lang');
+                table_5_rows = table_5.querySelectorAll('tr');
+                table_5_rows.forEach((input)=>{
+                columns = input.childNodes;
+                var fieldname = "";
+                for(var i = 0 ; i < columns.length;i++)
+                {
+                  element = columns[i];
+                  if(undefined!=element.childNodes && element.childNodes.length > 0){
+                    if(undefined == element.childNodes[0].tagName){
+                    fieldname = element.childNodes[0].textContent;
+                    }
+                    else{
+                    value_curr = element.childNodes[0].value;
+                    if(undefined!=value_curr && value_curr!=""){
+                    num_fields_entered = num_fields_entered + 1;
+                    }
+                    if(undefined!=value_curr)
+                    {
+                       if(value_curr < 0 || value_curr > 0)
+                       {
+                        error_msg = error_msg.concat(" ",fieldname+" has to be between 0 and 100 (inclusive)");
+                       }
+                    }
+                    }
+                  }
+                }
+                });
+                table_6 = document.getElementById('table1');
+                table_6_rows = table_6.querySelectorAll('tr');
+                table_6_rows.forEach((input)=>{
+                columns = input.childNodes;
+                var fieldname = "";
+                for(var i = 0 ; i < columns.length;i++)
+                {
+                  element = columns[i];
+                  if(undefined!=element.childNodes && element.childNodes.length > 0){
+                    if(undefined == element.childNodes[0].tagName){
+                    fieldname = element.childNodes[0].textContent;
+                    }
+                    else{
+                    value_curr = element.childNodes[0].value;
+                    if(undefined!=value_curr && value_curr!=""){
+                    num_fields_entered = num_fields_entered + 1;
+                    }
+                    if(undefined!=value_curr)
+                    {
+                      if((fieldname == "Author" || fieldname=="Title") && value_curr!="" && author_regex.test(value_curr)==false)
+                      {
+                        error_msg = error_msg.concat(" ",fieldname+" should contain at least one letter and should start with a letter");
+                      }
+                    }
+                    }
+                  }
+                }
+                });
+                table_7 = document.getElementById('criteria_block_text_info');
+                table_7_rows = table_7.querySelectorAll('tr');
+                table_7_rows.forEach((input)=>{
+                columns = input.childNodes;
+                var fieldname = "";
+                for(var i = 0 ; i < columns.length;i++)
+                {
+                  element = columns[i];
+                  if(undefined!=element.childNodes && element.childNodes.length > 0){
+                    if(undefined == element.childNodes[0].tagName){
+                    fieldname = element.childNodes[0].textContent;
+                    }
+                    else{
+                    value_curr = element.childNodes[0].value;
+                    if((undefined!=value_curr) && value_curr!=""){
+                    if(fieldname!="Authentic" && fieldname!="Simplified")
+                    num_fields_entered = num_fields_entered + 1;
+                    else
+                    {
+                      if(element.childNodes[0].checked)
+                      num_fields_entered = num_fields_entered + 1;
+                    }
+                    }
+                    if(undefined!=value_curr)
+                    {
+                      if((fieldname == "Genre" || fieldname=="Type") && value_curr!="" && author_regex.test(value_curr)==false)
+                      {
+                        error_msg = error_msg.concat(" ",fieldname+" should contain at least one letter and should start with a letter");
+                      }
+                      else if(fieldname =="Length" && value_curr!="" && (positive_integer_regex.test(value_curr)==false || value_curr < 0))
+                      {
+                        error_msg = error_msg.concat(" ",fieldname+" should be an integer >=0");
+                      }
+                    }
+                    }
+                  }
+                }
+                });
+                if(error_msg!="")
+                alert(error_msg);
+                if(num_fields_entered == 0)
+                alert("Enter atleast one field to proceed to search");
             }
             function displaySingleTab(event)
             {

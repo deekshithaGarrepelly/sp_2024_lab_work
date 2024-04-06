@@ -172,6 +172,15 @@
 .criteria_block_metrics{
   display: none;
 }
+.criteria_block_metrics_referntial{
+  display: none;
+}
+.criteria_block_metrics_syn_complexity{
+  display: none;
+}
+.criteria_block_metrics_diversity{
+  display: none;
+}
 
 .search_button{
   margin-left: 40%;

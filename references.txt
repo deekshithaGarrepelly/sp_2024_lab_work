@@ -14,3 +14,6 @@ https://www.w3schools.com/howto/howto_js_accordion.asp
 https://flask.palletsprojects.com/en/2.3.x/patterns/flashing/
 https://flask.palletsprojects.com/en/2.3.x/patterns/wtforms/
 https://dev.to/tillsanders/let-s-stop-using-a-za-z-4a0m
+https://en.wikipedia.org/wiki/Basic_Latin_(Unicode_block)
+https://en.wikipedia.org/wiki/Latin_script_in_Unicode
+https://www.regular-expressions.info/unicode.html

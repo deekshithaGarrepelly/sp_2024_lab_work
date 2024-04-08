@@ -93,6 +93,7 @@
     height: 100vh;
     position: relative;
     display: block;
+    overflow-y: scroll;
 }
   
   /* Clear floats after the columns */
@@ -115,6 +116,7 @@
     height: 100vh; 
     position: relative;
     display: block;
+    overflow-y: scroll;
 }
 
 .flexbox{

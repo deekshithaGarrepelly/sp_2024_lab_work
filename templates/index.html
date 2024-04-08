@@ -315,6 +315,10 @@
                 document.getElementsByClassName('more_results_tab')[0].style.display = "block";
               }
             }
+            function handleBookSelection(event)
+            {
+              document.getElementById('selected_book_name').innerHTML = event.target.value;
+            }
           </script>
     </head>
     <body>
@@ -352,18 +356,15 @@
             <div class="row">
                 <div class="column" style="background-color:#aaa;">
                   <h2>Books</h2>
-                  {%for res in results%}
-                  <tr><td>{{res}}</td></tr>
+                  <p id="selected_book_name"></p>
+                  {% if numResults==0 %}
+                  <p> No books found</p>
+                  {% else %}
+                  {%for key,value in results.items()%}
+                  <tr><td><input type="radio" name="books" value={{key}} onchange="handleBookSelection(event)"><a href={{value['url']}} target="_blank">{{key}}</a></input></td></tr>
                   <br/>
                   {%endfor%}
-
-                  <p>Books go here..</p>
-                  <p>Books go here..</p>
-                  <p>Books go here..</p>
-                  <p>Books go here..</p>
-                  <p>Books go here..</p>
-                  <p>Books go here..</p>
-                  <p>Books go here..</p>
+                  {%endif %}
                 </div>
                 <div class="column2" style="background-color:#bbb;">
                 <div class="flexbox">

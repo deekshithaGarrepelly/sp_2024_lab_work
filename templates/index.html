@@ -7,6 +7,7 @@
           integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
           crossorigin="anonymous"></script>
           <script type="text/javascript">
+            var selected_book;
             function handleChange(event,value)
             {
               event.target.value = value;
@@ -283,6 +284,7 @@
                 alert(error_msg);
                 if(num_fields_entered == 0)
                 alert("Enter atleast one field to proceed to search");
+               
             }
             function displaySingleTab(event)
             {
@@ -317,8 +319,110 @@
             }
             function handleBookSelection(event)
             {
+              selected_book = event.target.value;
               document.getElementById('selected_book_name').innerHTML = event.target.value;
             }
+            function handleNextClick(event)
+            {
+              event.preventDefault();
+              var curr_page_number = Number(event.target.value);
+              console.log("current page number : "+curr_page_number);
+              $.ajax(
+                {
+                        url: "/getNextResults",
+                        data : {
+                          "pageNum" : curr_page_number + 1
+                        },
+                        success: function (response) {
+                            var isLastPage = response['isLastPage'];
+                            var books = response['books'];
+                            if(isLastPage)
+                            document.getElementById('next_button').disabled = true;
+                            books_str="<table>";
+                            var length_books = books.length;
+                            for(var i = 0; i < length_books;i++)
+                            {
+                              books_str+='<tr>';
+                              books_str+='<td>';
+                              books_str+='<input type="radio" name="books"' 
+                              books_str+='value=\"';
+                              books_str+=(books[i]['Book_name'])
+                              books_str+='\"';
+                              books_str+='onchange="handleBookSelection(event)">';
+                              books_str+='<a href=\"';
+                              books_str+=books[i]['url'];
+                              books_str+='\"';
+                              books_str+='target="_blank">';
+                              books_str+=books[i]['Book_name'];
+                              books_str+='</td></tr>';
+                            }
+                            books_str+='</table>';
+                            document.getElementById('all_books_block').innerHTML=books_str;
+                            //console.log(document.getElementById('all_books_block').innerHTML);
+                            document.getElementById('next_button').value = curr_page_number + 1;
+                            if(curr_page_number + 1>1)
+                            {
+                              document.getElementById('previous_button').disabled=false;
+                            }
+                            else{
+                              document.getElementById('previous_button').disabled=true;
+                            }
+                            document.getElementById('previous_button').value = curr_page_number;
+                        }
+                }
+              );
+              console.log("current page number after response: "+document.getElementById('next_button').value);
+              console.log("previous button value : "+document.getElementById('previous_button').value);
+
+            }
+            function handlePreviousButton(event)
+            {
+                var pageNum = Number(event.target.value);
+                $.ajax(
+                {
+                        url: "/getNextResults",
+                        data : {
+                          "pageNum" : pageNum
+                        },
+                        success: function (response) {
+                            var isLastPage = response['isLastPage'];
+                            var books = response['books'];
+                            books_str="<table>";
+                            var length_books = books.length;
+                            for(var i = 0; i < length_books;i++)
+                            {
+                              books_str+='<tr>';
+                              books_str+='<td>';
+                              books_str+='<input type="radio" name="books"' 
+                              books_str+='value=\"';
+                              books_str+=(books[i]['Book_name'])
+                              books_str+='\"';
+                              if(books[i]['Book_name']==selected_book)
+                              books_str+='checked = true';
+                              books_str+='onchange="handleBookSelection(event)">';
+                              books_str+='<a href=\"';
+                              books_str+=books[i]['url'];
+                              books_str+='\"';
+                              books_str+='target="_blank">';
+                              books_str+=books[i]['Book_name'];
+                              books_str+='</td></tr>';
+                            }
+                            books_str+='</table>';
+                            document.getElementById('all_books_block').innerHTML=books_str;
+                            console.log(document.getElementById('all_books_block').innerHTML);
+                            document.getElementById('previous_button').value = pageNum - 1;
+                            if(pageNum == 1)
+                            {
+                              event.target.disabled = true;
+                            }
+                            document.getElementById('next_button').value = pageNum;
+                            document.getElementById('next_button').disabled=false;       
+                        }
+                }
+              );
+
+            }
+
           </script>
     </head>
     <body>
@@ -354,17 +458,21 @@
                     </div>
             </div>
             <div class="row">
+              
                 <div class="column" style="background-color:#aaa;">
                   <h2>Books</h2>
                   <p id="selected_book_name"></p>
-                  {% if numResults==0 %}
-                  <p> No books found</p>
-                  {% else %}
-                  {%for key,value in results.items()%}
-                  <tr><td><input type="radio" name="books" value={{key}} onchange="handleBookSelection(event)"><a href={{value['url']}} target="_blank">{{key}}</a></input></td></tr>
-                  <br/>
+                  <div id="all_books_block">
+                  <table>
+                  {%for book in results%}
+                  <tr><td><input type="radio" name="books" value={{book['Book_name']}} onchange="handleBookSelection(event)"><a href={{book['url']}} target="_blank">{{book['Book_name']}}</a></input></td></tr>
                   {%endfor%}
-                  {%endif %}
+                  </table>
+                  </div>
+                  {% if results%}
+                  <button onclick="handlePreviousButton(event)" id="previous_button" value="0" disabled>Previous</button>
+                  <button value="{{curr_page_number}}" onclick="handleNextClick(event)" id="next_button">Next</button>
+                  {%endif%}
                 </div>
                 <div class="column2" style="background-color:#bbb;">
                 <div class="flexbox">
@@ -395,6 +503,7 @@
                   </div>
 
                 </div>
+              
               </div>
         </div>
         

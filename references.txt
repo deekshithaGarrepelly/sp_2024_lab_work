@@ -17,3 +17,8 @@ https://dev.to/tillsanders/let-s-stop-using-a-za-z-4a0m
 https://en.wikipedia.org/wiki/Basic_Latin_(Unicode_block)
 https://en.wikipedia.org/wiki/Latin_script_in_Unicode
 https://www.regular-expressions.info/unicode.html
+https://pythonhosted.org/Flask-paginate/
+https://gist.github.com/mozillazg/69fb40067ae6d80386e10e105e6803c9
+https://www.mongodb.com/docs/manual/reference/method/db.collection.count/
+https://www.mongodb.com/docs/manual/reference/method/cursor.limit/
+https://www.makeuseof.com/tag/python-javascript-communicate-json/

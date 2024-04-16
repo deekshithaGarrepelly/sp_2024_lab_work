@@ -21,6 +21,7 @@ default_ret = 10
 total_num_books = 0
 show_next = True
 total_num_pages = 0
+all_books = []
 
 #default app routing
 @app.route('/')
@@ -31,6 +32,7 @@ def homepage():
   global results_global
   global results
   global total_num_pages
+  global all_books
   try:
     client.admin.command('ping')
     print("Pinged your deployment. You successfully connected to MongoDB!")
@@ -63,7 +65,14 @@ def homepage():
 
 @app.route('/fetchAll',methods=['GET'])
 def fetchAll():
-  return db['Books_with_metrics'].find()
+  global results
+  print(f"entered fetchAll :")
+  return results
+
+@app.route('/fetchAllList',methods=['GET'])
+def fetchAllList():
+  global results_global
+  return results_global
 
 @app.route('/collect_file_data',methods=['POST','GET'])
 def collect_file_data():
@@ -101,6 +110,25 @@ def getNextResults():
   request_res['books'] = temp_res
   return request_res
   
+@app.route('/searchWithCriteria',methods=['GET'])
+def searchWithCriteria():
+  res_list = []
+  col = db['Books_with_metrics']
+  keyValuePairs = json.loads(request.args.get('keyValuePairs'))
+  print(f'keyValue : {keyValuePairs}')
+  if len(keyValuePairs)==1:
+    for rec in col.find(keyValuePairs):
+      del rec['_id']
+      res_list.append(rec)
+  else:
+    all_condtions = []
+    for x in keyValuePairs:
+      all_condtions.append({x:keyValuePairs[x]})
+    for rec in col.find({'$and':all_condtions}):
+      del rec['_id']
+      res_list.append(rec)
+  return res_list
+
 
 if __name__ == "__main__":
   app.run(debug=True)

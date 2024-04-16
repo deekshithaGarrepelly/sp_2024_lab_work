@@ -8,6 +8,41 @@
           crossorigin="anonymous"></script>
           <script type="text/javascript">
             var selected_book;
+            var all_results;
+            var all_results_list;
+            var curr_book_data;
+            const descriptive_coh_metrics = ["mean_len_of_paras","mean_num_of_letters_in_words","mean_num_words_per_sent","num_of_paras","num_of_sentences","num_words"]
+            const referential_cohesion_metrics = ["local_argument_overlap","local_content_word_overlap","local_noun_overlap","local_stem_overlap"]
+            const word_information = ["adj_incidence","adverb_incidence","content_word_incidence","noun_incidence","verb_incidence"]
+            const lexical_diversity = ["content_ttr","ttr"]
+            const syn_complexity_feats = ["min_edit_dist_lemma","min_edit_dist_pos","min_edit_dist_sent"]
+            const other_feats = ["gradelevel"];
+            var search_results = [];
+            var field_name_mappings = {
+              "mean_len_of_paras" : "Mean length of Paragraphs",
+              "mean_num_of_letters_in_words" : "Mean number of letters in words",
+              "mean_num_words_per_sent" : "Mean number of words per sentence",
+              "num_of_paras" : "Number of paragraphs",
+              "num_of_sentences" : "Number of sentences",
+              "num_words" : "Number of words",
+              "local_argument_overlap" : "Local argument overlap",
+              "local_content_word_overlap" : "Local content word overlap",
+              "local_noun_overlap": "Local noun overlap",
+              "local_stem_overlap": "Local stem overlap",
+              "adj_incidence" : "Adjective Incidence",
+              "adverb_incidence" : "Adverb Incidence",
+              "content_word_incidence" : "Content word Incidence",
+              "noun_incidence" : "Noun incidence",
+              "verb_incidence" : "Verb Incidence",
+              "content_ttr" : "Content word Type token ratio",
+              "ttr" : "Type token ratio",
+              "min_edit_dist_lemma" : "Min edit distance lemma",
+              "min_edit_dist_pos" : "Min edit distance POS",
+              "min_edit_dist_sent" : "Min edit distance sentences",
+              "gradelevel" : "Flesch Kincaid grade level"
+            };
+            var total_len;
+            var last_page_num;
             function handleChange(event,value)
             {
               event.target.value = value;
@@ -18,15 +53,15 @@
             }
             function toggle_block(event,id_str)
             {
-              event.preventDefault();
               display_curr = document.getElementsByClassName(id_str)[0].style.display;
-              if(display_curr == "none")
+              if(undefined==display_curr || display_curr == "none" || display_curr=="")
               document.getElementsByClassName(id_str+"")[0].style.display = "block";
               else
               document.getElementsByClassName(id_str+"")[0].style.display = "none";
             }
             function validateAndSubmit(event)
             {
+              keyValuePairs = {};
               event.preventDefault();
               errors_present = false;
               error_msg = "";
@@ -48,6 +83,7 @@
                     else{
                     value_curr = element.childNodes[0].value;
                     if(undefined!=value_curr && value_curr!=""){
+                    keyValuePairs[element.childNodes[0].id+""] = {$gt : Number(value_curr)};
                     num_fields_entered = num_fields_entered + 1;
                     }
                     if(undefined!=value_curr)
@@ -86,6 +122,7 @@
                     else{
                     value_curr = element.childNodes[0].value;
                     if(undefined!=value_curr && value_curr!=""){
+                    keyValuePairs[element.childNodes[0].id+""] = {$gt : Number(value_curr)};
                     num_fields_entered = num_fields_entered + 1;
                     }
                     if(undefined!=value_curr)
@@ -114,6 +151,7 @@
                     else{
                     value_curr = element.childNodes[0].value;
                     if(undefined!=value_curr && value_curr!=""){
+                    keyValuePairs[element.childNodes[0].id+""] = {$gt : Number(value_curr)};
                     num_fields_entered = num_fields_entered + 1;
                     }
                     if(undefined!=value_curr)
@@ -158,6 +196,7 @@
                     else{
                     value_curr = element.childNodes[0].value;
                     if(undefined!=value_curr && value_curr!=""){
+                    keyValuePairs[element.childNodes[0].id+""] = {$gt : Number(value_curr)};
                     num_fields_entered = num_fields_entered + 1;
                     }
                     if(undefined!=value_curr)
@@ -201,6 +240,7 @@
                     else{
                     value_curr = element.childNodes[0].value;
                     if(undefined!=value_curr && value_curr!=""){
+                    keyValuePairs[element.childNodes[0].id+""] = {$gt : Number(value_curr)};
                     num_fields_entered = num_fields_entered + 1;
                     }
                     if(undefined!=value_curr)
@@ -229,6 +269,7 @@
                     else{
                     value_curr = element.childNodes[0].value;
                     if(undefined!=value_curr && value_curr!=""){
+                    keyValuePairs[element.childNodes[0].id+""] = {$regex :value_curr,$options:'i'};
                     num_fields_entered = num_fields_entered + 1;
                     }
                     if(undefined!=value_curr)
@@ -257,8 +298,10 @@
                     else{
                     value_curr = element.childNodes[0].value;
                     if((undefined!=value_curr) && value_curr!=""){
-                    if(fieldname!="Authentic" && fieldname!="Simplified")
+                    if(fieldname!="Authentic" && fieldname!="Simplified"){
                     num_fields_entered = num_fields_entered + 1;
+                    keyValuePairs[element.childNodes[0].id+""] = {$regex:value_curr,$options:'i'};
+                    }
                     else
                     {
                       if(element.childNodes[0].checked)
@@ -284,6 +327,43 @@
                 alert(error_msg);
                 if(num_fields_entered == 0)
                 alert("Enter atleast one field to proceed to search");
+                if(error_msg=="" && num_fields_entered > 0)
+                {
+                  $.ajax(
+                    {
+                      url : "/searchWithCriteria",
+                      data : {
+                        "keyValuePairs" : JSON.stringify(keyValuePairs)
+                      },
+                      type:"GET",
+                      contentType : "application/json",
+                      success : function(res){
+                        var books_str = "<table>";
+                        for(var i = 0; i < res.length; i++){
+                          books_str+='<tr>';
+                          books_str+='<td>';
+                          books_str+='<input type="radio" name="books"' 
+                          books_str+='value=\"';
+                          books_str+=(res[i]['Book_name'])
+                          books_str+='\"';
+                          if(res[i]['Book_name']==selected_book)
+                          books_str+='checked = true';
+                          books_str+='onchange="handleBookSelection(event)">';
+                          books_str+='<a href=\"';
+                          books_str+=res[i]['url'];
+                          books_str+='\"';
+                          books_str+='target="_blank">';
+                          books_str+=res[i]['Book_name'];
+                          books_str+='</td></tr>';
+
+                        }
+                        books_str+="</table>";
+                        document.getElementById('all_books_block').innerHTML = books_str;
+
+                      }
+                    }
+                  )
+                }
                
             }
             function displaySingleTab(event)
@@ -317,115 +397,272 @@
                 document.getElementsByClassName('more_results_tab')[0].style.display = "block";
               }
             }
+            function handleLoad()
+            {
+              $.ajax(
+                  {
+                    url:'/fetchAll',
+                    method : "GET"
+                  }
+                ).then((response)=>{
+                      all_results = JSON.parse(JSON.stringify(response));
+                      
+                })
+              $.ajax(
+                {
+                  url : '/fetchAllList',
+                  method : "GET"
+                }
+              ).then(
+                (response)=>{
+                  all_results_list = response;
+                  console.log(all_results_list);
+                  total_len = all_results_list.length;
+                  last_page_num = Math.ceil(total_len/20);
+                }
+              )
+
+            }
+            function getVocabData(dictOfValues)
+            {
+              var vocab_str = "";
+              nouns_list = dictOfValues['NOUNS'];
+              if(nouns_list!=undefined){
+              vocab_str +="<b>Top 25 Nouns</b>";
+              vocab_str+="<br/>";
+              for(var i = 0; i < nouns_list.length; i++)
+              {
+                vocab_str+=nouns_list[i];
+                vocab_str+="<br/>";
+              }
+              }
+              verbs_list = dictOfValues['VERB'];
+              if(undefined!=verbs_list){
+              vocab_str+="<b> Top 25 Verbs</b>";
+              vocab_str+="<br/>";
+              for(var i = 0; i < verbs_list.length; i++)
+              {
+                vocab_str+=verbs_list[i];
+                vocab_str+="<br/>";
+              }
+              }
+              adj_list = dictOfValues['ADJ'];
+              if(undefined!=adj_list)
+              {
+                vocab_str+="<b> Top 25 Adjectives</b>";
+                vocab_str+="<br/>";
+                for(var i = 0; i < adj_list.length; i++)
+                {
+                  vocab_str+=adj_list[i];
+                  vocab_str+="<br/>";
+                }
+              }
+            return vocab_str;
+            }
+            function getCollocationsData(dictOfValues)
+            {
+              collocation_str = "";
+              bigrams = dictOfValues['bigrams'];
+              if(undefined!=bigrams)
+              {
+                collocation_str += "Top 25 bigrams : ";
+                collocation_str += "<br/>";
+                for(var i = 0; i < bigrams.length; i++)
+                {
+                  collocation_str+=bigrams[i];
+                  collocation_str+="<br/>";
+                }
+              }
+              trigrams = dictOfValues['trigrams'];
+              if(undefined!=trigrams)
+              {
+                collocation_str+= "Top 25 trigrams : ";
+                collocation_str +="<br/>";
+                for(var i = 0; i < trigrams.length; i++)
+                {
+                  collocation_str+=trigrams[i];
+                  collocation_str+="<br/>";
+                }
+              }
+              quadrgrams = dictOfValues['quadrgrams'];
+              if(undefined!=quadrgrams)
+              {
+                collocation_str+="Top 25 quadrgrams : ";
+                collocation_str+="<br/>";
+                for(var i = 0; i < quadrgrams.length; i++)
+                {
+                  collocation_str+=quadrgrams[i];
+                  collocation_str+="<br/>";
+                }
+              }
+              return collocation_str;
+            }
             function handleBookSelection(event)
             {
               selected_book = event.target.value;
               document.getElementById('selected_book_name').innerHTML = event.target.value;
+              let descriptive_metrics_data="";
+              let referntiatial_metrics_data = "";
+              let syn_metrics_data = "";
+              let word_info_metrics_data = "";
+              let lexical_diversity_data = "";
+              let other_feats_data = "";
+              let vocab_data = "";
+
+              if (undefined == all_results){
+                $.ajax(
+                  {
+                    url:'/fetchAll',
+                    method : "GET"
+                  }
+                ).then((response)=>{
+                      all_results = JSON.parse(JSON.stringify(response));
+                      
+                }).then(
+                  ()=>{
+                      curr_book_data = JSON.stringify(all_results[selected_book]);
+                      console.log("curr_book_data : in ajax fectch"+curr_book_data);
+                      desc_print_str = printSubCategoryMetrics(descriptive_coh_metrics,curr_book_data);
+                      ref_print_str = printSubCategoryMetrics(referential_cohesion_metrics,curr_book_data);
+                      word_info_str = printSubCategoryMetrics(word_information,curr_book_data);
+                      lexical_diversity_str = printSubCategoryMetrics(lexical_diversity,curr_book_data);
+                      syn_complexity_str = printSubCategoryMetrics(syn_complexity_feats,curr_book_data);
+                      other_feats_str = printSubCategoryMetrics(other_feats,curr_book_data);
+                      document.getElementById('readability_tab').innerHTML = 
+                      "<b> Descriptive Metrics </b>"+"</br>"+desc_print_str+"</br>"+
+                      "<b> Referential Cohesion Metrics </b>"+"</br>"+ref_print_str+"</br>"+
+                      "<b> Word Information Metrics </b>"+"</br>"+word_info_str+"</br>"+
+                      "<b> Lexical Diversity Metrics </b>"+"</br>"+lexical_diversity_str+"</br>"+
+                      "<b> Syntactic Complexity Metrics </b>"+"</br>"+syn_complexity_str+"</br>"+
+                      "<b> Traditional Readability Metrics </b>"+"</br>"+other_feats_str+"</br>";
+                      vocab_data = getVocabData(curr_book_data);
+                      document.getElementById('vocab_results_pos').innerHTML = vocab_data;
+                      collocations_data = getCollocationsData(curr_book_data);
+                      document.getElementById('vocab_results_collocations').innerHTML = collocations_data;
+
+
+                  }
+                )
+              }
+              else{
+                console.log("entered else :");
+                curr_book_data = JSON.parse(JSON.stringify(all_results[selected_book]));
+                console.log("curr_book_data : in else"+curr_book_data);
+                desc_print_str = printSubCategoryMetrics(descriptive_coh_metrics,curr_book_data);
+                ref_print_str = printSubCategoryMetrics(referential_cohesion_metrics,curr_book_data);
+                word_info_str = printSubCategoryMetrics(word_information,curr_book_data);
+                lexical_diversity_str = printSubCategoryMetrics(lexical_diversity,curr_book_data);
+                syn_complexity_str = printSubCategoryMetrics(syn_complexity_feats,curr_book_data);
+                other_feats_str = printSubCategoryMetrics(other_feats,curr_book_data);
+                document.getElementById('readability_tab').innerHTML = 
+                "<b> Descriptive Metrics </b>"+"</br>"+desc_print_str+"</br>"+
+                "<b> Referential Cohesion Metrics </b>"+"</br>"+ref_print_str+"</br>"+
+                "<b> Word Information Metrics </b>"+"</br>"+word_info_str+"</br>"+
+                "<b> Lexical Diversity Metrics </b>"+"</br>"+lexical_diversity_str+"</br>"+
+                "<b> Syntactic Complexity Metrics </b>"+"</br>"+syn_complexity_str+"</br>"+
+                "<b> Traditional Readability Metrics </b>"+"</br>"+other_feats_str+"</br>";
+                vocab_data = getVocabData(curr_book_data);
+                console.log("vocab_data is : "+vocab_data);
+                document.getElementById('vocab_results_pos').innerHTML = vocab_data;
+                collocations_data = getCollocationsData(curr_book_data);
+                document.getElementById('vocab_results_collocations').innerHTML = collocations_data;
+              }
+
+
+            }
+            function printSubCategoryMetrics(listofmetricNames, dictOfValues)
+            {
+              var ret_str = "";
+              console.log("in printSubCategoryMetrics : "+dictOfValues);
+              for(var i = 0; i < listofmetricNames.length; i++)
+              {
+                ret_str+=field_name_mappings[listofmetricNames[i]];
+                ret_str+=" : ";
+                ret_str+=dictOfValues[listofmetricNames[i]];
+                ret_str+="<br/>";
+              }
+              return ret_str;
             }
             function handleNextClick(event)
             {
               event.preventDefault();
               var curr_page_number = Number(event.target.value);
-              console.log("current page number : "+curr_page_number);
-              $.ajax(
-                {
-                        url: "/getNextResults",
-                        data : {
-                          "pageNum" : curr_page_number + 1
-                        },
-                        success: function (response) {
-                            var isLastPage = response['isLastPage'];
-                            var books = response['books'];
-                            if(isLastPage)
-                            document.getElementById('next_button').disabled = true;
-                            books_str="<table>";
-                            var length_books = books.length;
-                            for(var i = 0; i < length_books;i++)
-                            {
-                              books_str+='<tr>';
-                              books_str+='<td>';
-                              books_str+='<input type="radio" name="books"' 
-                              books_str+='value=\"';
-                              books_str+=(books[i]['Book_name'])
-                              books_str+='\"';
-                              books_str+='onchange="handleBookSelection(event)">';
-                              books_str+='<a href=\"';
-                              books_str+=books[i]['url'];
-                              books_str+='\"';
-                              books_str+='target="_blank">';
-                              books_str+=books[i]['Book_name'];
-                              books_str+='</td></tr>';
-                            }
-                            books_str+='</table>';
-                            document.getElementById('all_books_block').innerHTML=books_str;
-                            //console.log(document.getElementById('all_books_block').innerHTML);
-                            document.getElementById('next_button').value = curr_page_number + 1;
-                            if(curr_page_number + 1>1)
-                            {
-                              document.getElementById('previous_button').disabled=false;
-                            }
-                            else{
-                              document.getElementById('previous_button').disabled=true;
-                            }
-                            document.getElementById('previous_button').value = curr_page_number;
-                        }
+              var start_index = curr_page_number*20;
+              var end_index = start_index + 20;
+              if(end_index > total_len)
+              end_index = total_len;
+              console.log("start_index is : "+start_index+" end_index : "+end_index);
+              if(curr_page_number + 1 == last_page_num)
+              document.getElementById('next_button').disabled = true;
+              books_str="<table>";
+              for(var i = start_index; i < end_index; i++)
+              {
+                books_str+='<tr>';
+                books_str+='<td>';
+                books_str+='<input type="radio" name="books"' 
+                books_str+='value=\"';
+                books_str+=(all_results_list[i]['Book_name'])
+                books_str+='\"';
+                books_str+='onchange="handleBookSelection(event)">';
+                books_str+='<a href=\"';
+                books_str+=all_results_list[i]['url'];
+                books_str+='\"';
+                books_str+='target="_blank">';
+                books_str+=all_results_list[i]['Book_name'];
+                books_str+='</td></tr>';
+              }
+              books_str+='</table>';
+              document.getElementById('all_books_block').innerHTML=books_str;
+              document.getElementById('next_button').value = curr_page_number + 1;
+              if(curr_page_number + 1>1)
+              {
+                document.getElementById('previous_button').disabled=false;
+              }
+              else{
+                  document.getElementById('previous_button').disabled=true;
                 }
-              );
-              console.log("current page number after response: "+document.getElementById('next_button').value);
-              console.log("previous button value : "+document.getElementById('previous_button').value);
-
+              document.getElementById('previous_button').value = curr_page_number;
             }
             function handlePreviousButton(event)
             {
-                var pageNum = Number(event.target.value);
-                $.ajax(
-                {
-                        url: "/getNextResults",
-                        data : {
-                          "pageNum" : pageNum
-                        },
-                        success: function (response) {
-                            var isLastPage = response['isLastPage'];
-                            var books = response['books'];
-                            books_str="<table>";
-                            var length_books = books.length;
-                            for(var i = 0; i < length_books;i++)
-                            {
-                              books_str+='<tr>';
-                              books_str+='<td>';
-                              books_str+='<input type="radio" name="books"' 
-                              books_str+='value=\"';
-                              books_str+=(books[i]['Book_name'])
-                              books_str+='\"';
-                              if(books[i]['Book_name']==selected_book)
-                              books_str+='checked = true';
-                              books_str+='onchange="handleBookSelection(event)">';
-                              books_str+='<a href=\"';
-                              books_str+=books[i]['url'];
-                              books_str+='\"';
-                              books_str+='target="_blank">';
-                              books_str+=books[i]['Book_name'];
-                              books_str+='</td></tr>';
-                            }
-                            books_str+='</table>';
-                            document.getElementById('all_books_block').innerHTML=books_str;
-                            console.log(document.getElementById('all_books_block').innerHTML);
-                            document.getElementById('previous_button').value = pageNum - 1;
-                            if(pageNum == 1)
-                            {
-                              event.target.disabled = true;
-                            }
-                            document.getElementById('next_button').value = pageNum;
-                            document.getElementById('next_button').disabled=false;       
-                        }
-                }
-              );
+              var pageNum = Number(event.target.value);
+              var start_index = (pageNum-1)*20;
+              var end_index = start_index + 20;
+              books_str="<table>";
+              for(var i = start_index; i < end_index; i++)
+              {
+                  books_str+='<tr>';
+                  books_str+='<td>';
+                  books_str+='<input type="radio" name="books"' 
+                  books_str+='value=\"';
+                  books_str+=(all_results_list[i]['Book_name'])
+                  books_str+='\"';
+                  if(all_results_list[i]['Book_name']==selected_book)
+                  books_str+='checked = true';
+                  books_str+='onchange="handleBookSelection(event)">';
+                  books_str+='<a href=\"';
+                  books_str+=all_results_list[i]['url'];
+                  books_str+='\"';
+                  books_str+='target="_blank">';
+                  books_str+=all_results_list[i]['Book_name'];
+                  books_str+='</td></tr>';
+              }
+              books_str+='</table>';
+              document.getElementById('all_books_block').innerHTML=books_str;
+              console.log(document.getElementById('all_books_block').innerHTML);
+              document.getElementById('previous_button').value = pageNum - 1;
+              if(pageNum == 1)
+              {
+                  event.target.disabled = true;
+              }
+              document.getElementById('next_button').value = pageNum;
+              document.getElementById('next_button').disabled=false; 
 
             }
 
           </script>
     </head>
-    <body>
+    <body onload="handleLoad()">
         <div class="app">
             <div class="header">
                 <b>A Linguistic Portal to Spanish in Proficiency</b>
@@ -465,7 +702,7 @@
                   <div id="all_books_block">
                   <table>
                   {%for book in results%}
-                  <tr><td><input type="radio" name="books" value={{book['Book_name']}} onchange="handleBookSelection(event)"><a href={{book['url']}} target="_blank">{{book['Book_name']}}</a></input></td></tr>
+                  <tr><td><input type="radio" name="books" value="{{book['Book_name']}}" onchange="handleBookSelection(event)"><a href={{book['url']}} target="_blank">{{book['Book_name']}}</a></input></td></tr>
                   {%endfor%}
                   </table>
                   </div>
@@ -489,16 +726,29 @@
                   <input type="button" name="More_Results" value="More_Results" name="select_button" class="dropbtn" onclick="displaySingleTab(event)"></input>
                 </div>
                 </div>
-                  <div class="search_tab">
+                  <div class="search_tab" id="search_tab">
                   {%include "searchTemplate.html"%}
                   </div>
-                  <div class="readability_tab">
+                  <div class="readability_tab" id="readability_tab">
                   <p>Readability</p>
                   </div>
-                  <div class="vocab_tab">
-                  <p>Vocabulary</p>
+                  <div class="vocab_tab" id="vocab_tab">
+                    <b>Vocabulary Results</b>
+                    <button class="accordion" name="vocab_results_pos" onclick="toggle_block(event,'vocab_results_pos')">Top 25 parts of speech results</button>
+                    <div class="vocab_results_pos">
+                      <p id="vocab_results_pos">
+                      </p>
+                    </div>
+
+                    <button class="accordion" name="vocab_results_collocations" onclick="toggle_block(event,'vocab_results_collocations')">Top 25 collocations results</button>
+                    <div class="vocab_results_collocations">
+                      <p id="vocab_results_collocations">
+                      </p>
+                    </div>
+
+                    
                   </div>
-                  <div class="more_results_tab">
+                  <div class="more_results_tab" id="more_results_tab">
                   <p>More results</p>
                   </div>
 

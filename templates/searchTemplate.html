@@ -14,25 +14,25 @@
         <table class="criteria_block_metrics" id="criteria_block_metrics">
             <tr>
                 <td>Number of Paragraphs</td>
-                <td><input type="number" name="num_paras" id="num_paras" onchange="handleChange(event,value)" min="0"  onmouseout="isNaN(this.value)?this.value=0:this.value=this.value"/></td>
+                <td><input type="number" name="num_of_paras" id="num_of_paras" onchange="handleChange(event,value)" min="0"  onmouseout="isNaN(this.value)?this.value=0:this.value=this.value"/></td>
                 <td>Number of sentences</td>
-                <td><input type="number" name="num_sents" id="num_sents" onchange="handleChange(event,value)" min="0" inputmode="Numeric" onmouseout="isNaN(this.value)?this.value=0:this.value=this.value"/></td>
+                <td><input type="number" name="num_of_sentences" id="num_of_sentences" onchange="handleChange(event,value)" min="0" inputmode="Numeric" onmouseout="isNaN(this.value)?this.value=0:this.value=this.value"/></td>
             </tr>
             <tr>
                 <td>Number of words</td>
                 <td><input type="number" name="num_words" id="num_words" onchange="handleChange(event,value)" min="0" inputmode="Numeric" onmouseout="isNaN(this.value)?this.value=0:this.value=this.value"/></td>
                 <td>Mean length of paragraphs</td>
-                <td><input type="number" name="mean_len_paras" id="mean_len_paras" onchange="handleChange(event,value)" min="0" inputmode="Decimal" onmouseout="isNaN(this.value)?this.value=0:this.value=this.value"/></td>
+                <td><input type="number" name="mean_len_of_paras" id="mean_len_of_paras" onchange="handleChange(event,value)" min="0" inputmode="Decimal" onmouseout="isNaN(this.value)?this.value=0:this.value=this.value"/></td>
             </tr>
             <tr>
                 <td>Standard deviation of mean length of paragraphs</td>
-                <td><input type="number" name="std_mlp" id="std_mlp" onchange="handleChange(event,value)" min="0" inputmode="Decimal" onmouseout="isNaN(this.value)?this.value=0:this.value=this.value"/></td>
+                <td><input type="number" name="std_mean_len_of_paras" id="std_mean_len_of_paras" onchange="handleChange(event,value)" min="0" inputmode="Decimal" onmouseout="isNaN(this.value)?this.value=0:this.value=this.value"/></td>
                 <td>Mean number of words in sentences</td>
-                <td><input type="number" name="mean_num_words_in_sents" id="mean_num_words_in_sents" onchange="handleChange(event,value)" min="0" inputmode="Decimal" onmouseout="isNaN(this.value)?this.value=0:this.value=this.value"/></td>
+                <td><input type="number" name="mean_num_words_per_sent" id="mean_num_words_per_sent" onchange="handleChange(event,value)" min="0" inputmode="Decimal" onmouseout="isNaN(this.value)?this.value=0:this.value=this.value"/></td>
             </tr>
             <tr>
                 <td>Standard deviation of mean length of sentences</td>
-                <td><input type="number" name="std_mls" id="std_mls" onchange="handleChange(event,value)" min="0" inputmode="Decimal" onmouseout="isNaN(this.value)?this.value=0:this.value=this.value"/></td>
+                <td><input type="number" name="std_of_num_of_words_in_sent" id="std_of_num_of_words_in_sent" onchange="handleChange(event,value)" min="0" inputmode="Decimal" onmouseout="isNaN(this.value)?this.value=0:this.value=this.value"/></td>
                 <td>Mean number of syllables in words</td>
                 <td><input type="number" name="mean_num_sylls" id="mean_num_sylls" onchange="handleChange(event,value)" min="0" inputmode="Decimal" onmouseout="isNaN(this.value)?this.value=0:this.value=this.value"/></td>
             </tr>
@@ -40,36 +40,36 @@
                 <td>Standard deviation of mean number of syllables</td>
                 <td><input type="number" name="std_mean_sylls" id="std_mean_sylls" onchange="handleChange(event,value)" min="0" inputmode="Decimal" onmouseout="isNaN(this.value)?this.value=0:this.value=this.value"/></td>
                 <td>Mean number of letters in words</td>
-                <td><input type="number" name="mean_num_letters" id="mean_num_letters" onchange="handleChange(event,value)" min="0" inputmode="Decimal" onmouseout="isNaN(this.value)?this.value=0:this.value=this.value"/></td>
+                <td><input type="number" name="mean_num_of_letters_in_words" id="mean_num_of_letters_in_words" onchange="handleChange(event,value)" min="0" inputmode="Decimal" onmouseout="isNaN(this.value)?this.value=0:this.value=this.value"/></td>
             </tr>
             <tr>
                 <td>Standard deviation of mean number of letters in words</td>
-                <td><input type="number" name="std_mean_letters_in_words" id="std_mean_letters_in_words" onchange="handleChange(event,value)" min="0" inputmode="Decimal" onmouseout="isNaN(this.value)?this.value=0:this.value=this.value"/></td>
+                <td><input type="number" name="std_of_num_of_letters_in_words" id="std_of_num_of_letters_in_words" onchange="handleChange(event,value)" min="0" inputmode="Decimal" onmouseout="isNaN(this.value)?this.value=0:this.value=this.value"/></td>
             </tr>
         </table>
         <button class="accordion" name="show_table_metrics_referential" id="show_table_metrics_referential" value="readability_metrics_button_referential" onclick="toggle_block(event,'criteria_block_metrics_referntial')">Search by Referential cohesion coh metrics</button>
             <table class="criteria_block_metrics_referntial" id="criteria_block_metrics_referntial">
                 <tr>
                     <td>Noun overlap adjacent</td>
-                    <td><input type="number" name="noun_overlap_adj" id="noun_overlap_adj" onchange="handleChange(event,value)" min="0" inputmode="Decimal" onmouseout="isNaN(this.value)?this.value=0:this.value=this.value"/></td>
+                    <td><input type="number" name="local_noun_overlap" id="local_noun_overlap" onchange="handleChange(event,value)" min="0" inputmode="Decimal" onmouseout="isNaN(this.value)?this.value=0:this.value=this.value"/></td>
                     <td>Noun overlap global</td>
                     <td><input type="number" name="noun_overlap_global" onchange="handleChange(event,value)" min="0" inputmode="Decimal" onmouseout="isNaN(this.value)?this.value=0:this.value=this.value"/></td>
                 </tr>
                 <tr>
                     <td>Content word overlap adjacent</td>
-                    <td><input type="number" name="cwr_overlap_adj" onchange="handleChange(event,value)" min="0" inputmode="Decimal" onmouseout="isNaN(this.value)?this.value=0:this.value=this.value"/></td>
+                    <td><input type="number" name="local_content_word_overlap" id="local_content_word_overlap" onchange="handleChange(event,value)" min="0" inputmode="Decimal" onmouseout="isNaN(this.value)?this.value=0:this.value=this.value"/></td>
                     <td>Content word overlap global</td>
                     <td><input type="number" name="cwr_overlap_global" onchange="handleChange(event,value)" min="0" inputmode="Decimal" onmouseout="isNaN(this.value)?this.value=0:this.value=this.value"/></td>
                 </tr>
                 <tr>
                     <td>Argument overlap adjacent</td>
-                    <td><input type="number" name="arg_overlap_adj" onchange="handleChange(event,value)" min="0" inputmode="Decimal" onmouseout="isNaN(this.value)?this.value=0:this.value=this.value"/></td>
+                    <td><input type="number" name="local_argument_overlap" id="local_argument_overlap" onchange="handleChange(event,value)" min="0" inputmode="Decimal" onmouseout="isNaN(this.value)?this.value=0:this.value=this.value"/></td>
                     <td>Argument overlap global</td>
                     <td><input type="number" name="arg_overlap_global" onchange="handleChange(event,value)" min="0" inputmode="Decimal" onmouseout="isNaN(this.value)?this.value=0:this.value=this.value"/></td>
                 </tr>
                 <tr>
                     <td>Local stem overlap</td>
-                    <td><input type="number" name="local_stem_overlap" onchange="handleChange(event,value)" min="0" inputmode="Decimal" onmouseout="isNaN(this.value)?this.value=0:this.value=this.value"/></td>
+                    <td><input type="number" name="local_stem_overlap" id="local_stem_overlap" onchange="handleChange(event,value)" min="0" inputmode="Decimal" onmouseout="isNaN(this.value)?this.value=0:this.value=this.value"/></td>
                 </tr>
             </table>
             <button class="accordion" name="show_table_metrics_lexical_diversity" id="show_table_metrics_lexical_diversity" value="readability_metrics_button_diversity" onclick="toggle_block(event,'criteria_block_metrics_diversity')">Search by Lexical Diversity and Word Information</button>
@@ -78,17 +78,17 @@
                     <td>Type token ratio</td>
                     <td><input type="number" name="ttr" id="ttr" onchange="handleChange(event,value)" min="0" max="1" inputmode="Decimal" onmouseout="isNaN(this.value)?this.value=0:this.value=this.value"/></td>
                     <td>Noun incidence</td>
-                    <td><input type="number" name="noun_incidence" onchange="handleChange(event,value)" min="0" inputmode="Decimal" onmouseout="isNaN(this.value)?this.value=0:this.value=this.value"/></td>
+                    <td><input type="number" name="noun_incidence" id="noun_incidence" onchange="handleChange(event,value)" min="0" inputmode="Decimal" onmouseout="isNaN(this.value)?this.value=0:this.value=this.value"/></td>
                 </tr>
                 <tr>
                     <td>Verb Incidence</td>
-                    <td><input type="number" name="verb_incidence" onchange="handleChange(event,value)" min="0" inputmode="Decimal" onmouseout="isNaN(this.value)?this.value=0:this.value=this.value"/></td>
+                    <td><input type="number" name="verb_incidence" id="verb_incidence" onchange="handleChange(event,value)" min="0" inputmode="Decimal" onmouseout="isNaN(this.value)?this.value=0:this.value=this.value"/></td>
                     <td>Adjective Incidence</td>
-                    <td><input type="number" name="adj_incidence" onchange="handleChange(event,value)" min="0" inputmode="Decimal" onmouseout="isNaN(this.value)?this.value=0:this.value=this.value"/></td>
+                    <td><input type="number" name="adj_incidence" id="adj_incidence" onchange="handleChange(event,value)" min="0" inputmode="Decimal" onmouseout="isNaN(this.value)?this.value=0:this.value=this.value"/></td>
                 </tr>
                 <tr>
                     <td>Adverb Incidence</td>
-                    <td><input type="number" name="adverb_incidence" onchange="handleChange(event,value)" min="0" inputmode="Decimal" onmouseout="isNaN(this.value)?this.value=0:this.value=this.value"/></td>
+                    <td><input type="number" name="adverb_incidence" id="adverb_incidence" onchange="handleChange(event,value)" min="0" inputmode="Decimal" onmouseout="isNaN(this.value)?this.value=0:this.value=this.value"/></td>
                     <td>Average content word frequency</td>
                     <td><input type="number" name="arg_cwr_freq" onchange="handleChange(event,value)" min="0" inputmode="Decimal" onmouseout="isNaN(this.value)?this.value=0:this.value=this.value"/></td>
                 </tr>
@@ -105,15 +105,15 @@
                 </tr>
                 <tr>
                     <td>Average minimum edit distances of POS tags between adjacent sentences</td>
-                    <td><input type="number" name="min_edit_pos" onchange="handleChange(event,value)" min="0" inputmode="Decimal" onmouseout="isNaN(this.value)?this.value=0:this.value=this.value"/></td>
+                    <td><input type="number" name="min_edit_dist_pos" id="min_edit_dist_pos" onchange="handleChange(event,value)" min="0" inputmode="Decimal" onmouseout="isNaN(this.value)?this.value=0:this.value=this.value"/></td>
                 </tr>
                 <tr>
                     <td>Average minimum edit distances of Lemmas between adjacent sentences</td>
-                    <td><input type="number" name="min_edit_lemma" onchange="handleChange(event,value)" min="0" inputmode="Decimal" onmouseout="isNaN(this.value)?this.value=0:this.value=this.value"/></td>
+                    <td><input type="number" name="min_edit_dist_lemma" id="min_edit_dist_lemma" onchange="handleChange(event,value)" min="0" inputmode="Decimal" onmouseout="isNaN(this.value)?this.value=0:this.value=this.value"/></td>
                 </tr>
                 <tr>
                     <td>Average minimum edit distances of words between adjacent sentences</td>
-                    <td><input type="number" name="min_edit_word" onchange="handleChange(event,value)" min="0" inputmode="Decimal" onmouseout="isNaN(this.value)?this.value=0:this.value=this.value"/></td>
+                    <td><input type="number" name="min_edit_dist_sent" id="min_edit_dist_sent" onchange="handleChange(event,value)" min="0" inputmode="Decimal" onmouseout="isNaN(this.value)?this.value=0:this.value=this.value"/></td>
                 </tr>
                 <tr>
                     <td>Number of Modifiers per noun phrase</td>
@@ -121,11 +121,11 @@
                 </tr>
                 <tr>
                     <td>Average Polysemous Index</td>
-                    <td><input type="number" name="poly_index" onchange="handleChange(event,value)" min="0" inputmode="Decimal" onmouseout="isNaN(this.value)?this.value=0:this.value=this.value"/></td>
+                    <td><input type="number" name="polysemous_percentage" id="polysemous_percentage" onchange="handleChange(event,value)" min="0" inputmode="Decimal" onmouseout="isNaN(this.value)?this.value=0:this.value=this.value"/></td>
                 </tr>
                 <tr>
                     <td>Flesch Reading Ease</td>
-                    <td><input type="number" name="flesch_reading_ease" onchange="handleChange(event,value)" min="0" inputmode="Decimal" onmouseout="isNaN(this.value)?this.value=0:this.value=this.value"/></td>
+                    <td><input type="number" name="readingEase" id="readingEase" onchange="handleChange(event,value)" min="0" inputmode="Decimal" onmouseout="isNaN(this.value)?this.value=0:this.value=this.value"/></td>
                 </tr>
                 <tr>
                     <td>Flesch Kincaid Reading Level</td>

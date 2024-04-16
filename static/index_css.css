@@ -213,6 +213,12 @@ body{
 .more_results_tab{
   display: none;
 }
+.vocab_results_pos{
+  display: none;
+}
+.vocab_results_collocations{
+  display: none;
+}
 
 
 

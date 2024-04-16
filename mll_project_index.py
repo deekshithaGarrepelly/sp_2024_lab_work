@@ -127,6 +127,7 @@ def searchWithCriteria():
     for rec in col.find({'$and':all_condtions}):
       del rec['_id']
       res_list.append(rec)
+  print(f"total num of results : {len(res_list)}")
   return res_list
 
 

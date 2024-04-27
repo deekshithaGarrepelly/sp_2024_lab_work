@@ -22,3 +22,4 @@ https://gist.github.com/mozillazg/69fb40067ae6d80386e10e105e6803c9
 https://www.mongodb.com/docs/manual/reference/method/db.collection.count/
 https://www.mongodb.com/docs/manual/reference/method/cursor.limit/
 https://www.makeuseof.com/tag/python-javascript-communicate-json/
+https://www.w3schools.com/howto/howto_css_loader.asp

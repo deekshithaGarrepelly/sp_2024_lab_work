@@ -36,6 +36,10 @@ var field_name_mappings = {
 };
 var total_len;
 var last_page_num;
+var results_desc = ["Number of words","Number of sentences","Mean number of letters in words","Standard deviation of mean number of letters in words",
+"Mean number of syllables per word","Standard deviation of mean number of syllables in words","Number of Paragraphs","Mean length of Paragraphs",
+"Standard deviation of Mean length of Paragraphs"];
+var results_ref = ["Noun overlap local","Noun overlap global","Local stem overlap","Global stem overlap","Argument overlap local","Argument overlap global","Content word overlap local","Content word overlap global"];
 function handleChange(event, value) {
   event.target.value = value;
 }
@@ -346,25 +350,36 @@ function displaySingleTab(event) {
     document.getElementsByClassName('search_tab')[0].style.display = "block";
     document.getElementsByClassName('readability_tab')[0].style.display = "none";
     document.getElementsByClassName('vocab_tab')[0].style.display = "none";
-    document.getElementsByClassName('more_results_tab')[0].style.display = "none";
+    document.getElementsByClassName('analyze_text_box')[0].style.display = "none";
+    document.getElementsByClassName('analyze_text_file')[0].style.display = "none";
   }
   else if (event.target.name == "Readability") {
     document.getElementsByClassName('search_tab')[0].style.display = "none";
     document.getElementsByClassName('readability_tab')[0].style.display = "block";
     document.getElementsByClassName('vocab_tab')[0].style.display = "none";
-    document.getElementsByClassName('more_results_tab')[0].style.display = "none";
+    document.getElementsByClassName('analyze_text_box')[0].style.display = "none";
+    document.getElementsByClassName('analyze_text_file')[0].style.display = "none";
   }
   else if (event.target.name == "Vocabulary") {
     document.getElementsByClassName('search_tab')[0].style.display = "none";
     document.getElementsByClassName('readability_tab')[0].style.display = "none";
     document.getElementsByClassName('vocab_tab')[0].style.display = "block";
-    document.getElementsByClassName('more_results_tab')[0].style.display = "none";
+    document.getElementsByClassName('analyze_text_box')[0].style.display = "none";
+    document.getElementsByClassName('analyze_text_file')[0].style.display = "none";
   }
-  else if (event.target.name == "More_Results") {
+  else if (event.target.name == "text_box_analyze") {
     document.getElementsByClassName('search_tab')[0].style.display = "none";
     document.getElementsByClassName('readability_tab')[0].style.display = "none";
     document.getElementsByClassName('vocab_tab')[0].style.display = "none";
-    document.getElementsByClassName('more_results_tab')[0].style.display = "block";
+    document.getElementsByClassName('analyze_text_box')[0].style.display = "block";
+    document.getElementsByClassName('analyze_text_file')[0].style.display = "none";
+  }
+  else if(event.target.name == "upload_a_file"){
+    document.getElementsByClassName('search_tab')[0].style.display = "none";
+    document.getElementsByClassName('readability_tab')[0].style.display = "none";
+    document.getElementsByClassName('vocab_tab')[0].style.display = "none";
+    document.getElementsByClassName('analyze_text_box')[0].style.display = "none";
+    document.getElementsByClassName('analyze_text_file')[0].style.display = "block";
   }
 }
 function handleLoad() {
@@ -688,6 +703,41 @@ function setToDefaultBooksList()
     document.getElementById('readability_tab').innerHTML = "";
     document.getElementById('vocab_results_pos').innerHTML = "";
     document.getElementById('vocab_results_collocations').innerHTML = "";
-
-
+}
+function analyzeEnteredText()
+{
+  document.getElementById('results_metrics').innerHTML = "";
+  text_entered = document.getElementById('entered_text').value;
+  if(undefined==text_entered || text_entered == "" || text_entered.length==0)
+  {
+    alert("Enter a text of length > 0 to analyze");
+  }
+  else{
+    document.getElementsByClassName('loader')[0].style.display = "block";
+    $.ajax(
+      {
+        url:"/computeMetrics",
+        method : "GET",
+        data :{
+          "enteredText":text_entered
+        },
+        contentType:"application/json",
+        success:function(res){
+          dict_metrics = res;
+          results_str = "<b>Descriptive metrics</b>";
+          results_str+="<br/>";
+          for(var i = 0; i < results_desc.length; i++)
+          {
+            var key = results_desc[i];
+            results_str += key;
+            results_str+=" : ";
+            results_str+=res[key];
+            results_str+="<br/>";
+          }
+          document.getElementsByClassName('loader')[0].style.display = "none";
+          document.getElementById('results_metrics').innerHTML = results_str;
+        }
+      }
+    )
+  }
 }

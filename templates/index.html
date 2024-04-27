@@ -10,36 +10,7 @@
     </head>
     <body onload="handleLoad()">
         <div class="app">
-            <div class="header">
-                <b>A Linguistic Portal to Spanish in Proficiency</b>
-                &nbsp;&nbsp;&nbsp;
-                    <div class="dropdown">
-                        <button class="dropbtn">Home</button>
-                    </div>
-                    <div class="dropdown">
-                        <button class="dropbtn">Corpus</button>
-                        <div class="dropdown-content">
-                            <a href="#">Teachers and Learners</a>
-                            <a href="#">Researchers</a>
-                            <a href="#">Analyze your texts</a>
-                            <a href="#">Add to Corpus</a>
-                          </div>
-                    </div>
-                    <div class="dropdown">
-                        <button class="dropbtn">Tutorials</button>
-                    </div>
-                    <div class="dropdown">
-                        <button class="dropbtn">Readability</button>
-                        <div class="dropdown-content">
-                            <a href="#">What is readability?</a>
-                            <a href="#">How is readability calculated?</a>
-                            <a href="#">Reading and L2 Learning</a>
-                          </div>
-                    </div>
-                    <div class="dropdown">
-                        <button class="dropbtn">Contact</button>
-                    </div>
-            </div>
+            {%include "header.html"%}
             <div class="row">
               
                 <div class="column" style="background-color:#aaa;">
@@ -69,7 +40,10 @@
                   <input type="button" name="Vocabulary" value="Vocabulary" name="select_button" class="dropbtn" onclick="displaySingleTab(event)"></input>
                 </div>
                 <div class="dropdown">
-                  <input type="button" name="More_Results" value="More_Results" name="select_button" class="dropbtn" onclick="displaySingleTab(event)"></input>
+                  <input type="button" name="text_box_analyze" value="Analyze your text" name="select_button" class="dropbtn" onclick="displaySingleTab(event)"></input>
+                </div>
+                <div class="dropdown">
+                  <input type="button" name="upload_a_file" value="Upload a file" name="select_button" class="dropbtn" onclick="displaySingleTab(event)"></input>
                 </div>
                 </div>
                   <div class="search_tab" id="search_tab">
@@ -94,8 +68,11 @@
 
                     
                   </div>
-                  <div class="more_results_tab" id="more_results_tab">
-                  <p>More results</p>
+                  <div class="analyze_text_box" id="analyze_text">
+                    {%include "analyze_text.html"%}
+                  </div>
+                  <div class="analyze_text_file" id="analyze_file">
+                    <p>Analyze your file here...</p>
                   </div>
 
                 </div>

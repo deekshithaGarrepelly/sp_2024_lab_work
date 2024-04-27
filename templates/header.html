@@ -1,0 +1,39 @@
+<html>
+    <head>
+        <link type="text/css" rel="stylesheet" href="static/index_css.css"/>
+        <meta charset="UTF-8">
+        <title>CALI - Spanish Linguistic proficiency portal</title>
+    </head>
+    <body>
+            <div class="header">
+                <b>A Linguistic Portal to Spanish in Proficiency</b>
+                &nbsp;&nbsp;&nbsp;
+                    <div class="dropdown">
+                        <button class="dropbtn"><a href="{{url_for('landing_page')}}">Home</a></button>
+                    </div>
+                    <div class="dropdown">
+                        <button class="dropbtn">Corpus</button>
+                        <div class="dropdown-content">
+                            <a href="{{url_for('teachers_and_learners')}}">Teachers and Learners</a>
+                            <a href="#">Researchers</a>
+                            <a href="{{url_for('analyze_text')}}">Analyze your texts</a>
+                            <a href="#">Add to Corpus</a>
+                          </div>
+                    </div>
+                    <div class="dropdown">
+                        <button class="dropbtn">Tutorials</button>
+                    </div>
+                    <div class="dropdown">
+                        <button class="dropbtn">Readability</button>
+                        <div class="dropdown-content">
+                            <a href="#">What is readability?</a>
+                            <a href="#">How is readability calculated?</a>
+                            <a href="#">Reading and L2 Learning</a>
+                          </div>
+                    </div>
+                    <div class="dropdown">
+                        <button class="dropbtn">Contact</button>
+                    </div>
+            </div>
+    </body>
+</html>

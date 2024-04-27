@@ -1,0 +1,72 @@
+<html>
+    <head>
+        <link type="text/css" rel="stylesheet" href="static/index_css.css"/>
+        <title>CALI - Spanish Linguistic proficiency portal</title>
+        <meta charset="UTF-8">
+        <title>CALI - Spanish Linguistic proficiency portal</title>
+        <script src="https://code.jquery.com/jquery-3.5.1.js"
+          integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
+          crossorigin="anonymous"></script>
+          <script type="text/javascript" src="{{url_for('static',filename='js_logic.js')}}"></script>
+    </head>
+    <body>
+        {%include "header.html"%}
+        <div class="app">
+        <table>
+            <tr>
+                <td>Enter text in the box below to analyze</td>
+                <td><textarea id="entered_text" maxlength="2000" name="text_to_analyze" rows="10" columns="20" style="resize:none;"></textarea></td>
+                <td>Select one or more metrics to be computed</td>
+                <td>
+                    <select name="coh_metrics" size="10" multiple>
+                        <option value="Number_of_words">Number of words</option>
+                        <option value="Number_of_sentences">Number of sentences</option>
+                        <option value="Number_of_paras">Number of paragraphs</option>
+                        <option value="mean_len_paras">Mean length of paragraphs</option>
+                        <option value="std_mean_len_paras">Standard deviation of mean length of paragraphs</option>
+                        <option value="mean_len_sents">Mean length of sentences</option>
+                        <option value="std_mean_len_sents">Standard deviation of mean length of sentences</option>
+                        <option value="mean_num_sylls">Mean number of syllables in words </option>
+                        <option value="mean_num_letters">Mean number of letters in words</option>
+                        <option value="std_mean_num_letters">Standard deviation of mean number of letters in words</option>
+                        <option value="noun_overlap_local">Noun overlap local</option>
+                        <option value="noun_overlap_global">Noun overlap global</option>
+                        <option value="arg_overlap_local">Argument overlap local</option>
+                        <option value="arg_overlap_global">Argument overlap global</option>
+                        <option value="cwr_overlap_global">Content word overlap global</option> 
+                        <option value="cwr_overlap_local">Content word overlap local</option>
+                        <option value="lsa_adj">Average latent semantic similarity between sentences</option>
+                        <option value="ttr_cwr">Type token ratio</option>
+                        <option value="mod_per_np">Number of modifiers per noun phrase</option> 
+                        <option value="syn_med_pos">Minimum editorial distance between POS tags</option> 
+                        <option value="syn_med_wrd">Minimum editorial distance between words</option> 
+                        <option value="syn_med_lemmas">Minimum editorial distance between lemmas</option> 
+                        <option value="syn_sim_adj">Proportion of intersectin of tree nodes between adjacent sentences</option>
+                        <option value="noun_incidence">Noun incidence</option>
+                        <option value="verb_incidence">Verb incidence</option>
+                        <option value="adj_incidence">Adjective incidence</option>
+                        <option value="adv_incidence">Adverb incidence</option>
+                        <option value="avg_freq_cwr">Average frequency of content words</option>
+                        <option value="avg_freq_all">Average frequency of all words</option>
+                        <option value="avg_freq_min">Average minimum frequency of all words</option>
+                        <option value="polysemy">Polysemy</option>
+                        <option value="hypernymy">Hypernymy</option>
+                        <option value="flesch_reading_ease">Flesch Reading Ease</option>
+                        <option value="flesch_kincaid">Flesch Kincaid Grade level</option>
+
+                    </select> 
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td><input type="button" value="Analyze the text" onclick="analyzeEnteredText()"/></td>
+            </tr>
+        </table>
+        <div class="loader"></div>
+        <p id="results_metrics">
+
+        </p>
+    </div>
+    </body>
+</html>

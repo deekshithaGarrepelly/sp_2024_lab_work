@@ -708,9 +708,20 @@ function analyzeEnteredText()
 {
   document.getElementById('results_metrics').innerHTML = "";
   text_entered = document.getElementById('entered_text').value;
-  if(undefined==text_entered || text_entered == "" || text_entered.length==0)
+  coh_metrics = document.getElementById('coh_metrics');
+  options = coh_metrics.options;
+  selected_options = [];
+  for(var i = 0; i < options.length; i++)
   {
-    alert("Enter a text of length > 0 to analyze");
+    if(options[i].selected)
+    {
+      selected_options.push(options[i].value);
+    }
+  }
+  console.log("selected cohmetrics are : "+selected_options);
+  if(undefined==text_entered || text_entered == "" || text_entered.length==0 || selected_options == undefined || selected_options.length==0)
+  {
+    alert("Enter a text of length > 0 and select at least 1 metric to compute to analyze the texts");
   }
   else{
     document.getElementsByClassName('loader')[0].style.display = "block";
@@ -719,20 +730,27 @@ function analyzeEnteredText()
         url:"/computeMetrics",
         method : "GET",
         data :{
-          "enteredText":text_entered
+          "enteredText":text_entered,
+          "metricsToCompute":JSON.stringify(selected_options)
         },
         contentType:"application/json",
         success:function(res){
           dict_metrics = res;
-          results_str = "<b>Descriptive metrics</b>";
+          console.log("dict_metrics is "+JSON.stringify(dict_metrics));
+          results_str = "<br/>"
+          results_str+="Computed Metrics : ";
           results_str+="<br/>";
-          for(var i = 0; i < results_desc.length; i++)
+          for(var x in dict_metrics)
           {
-            var key = results_desc[i];
-            results_str += key;
+            console.log("x : "+dict_metrics[x]);
+            results_str+=x;
             results_str+=" : ";
-            results_str+=res[key];
+            results_str+=dict_metrics[x];
             results_str+="<br/>";
+            /*results_str += key;
+            results_str+=" : ";
+            results_str+=value;
+            results_str+="<br/>";*/
           }
           document.getElementsByClassName('loader')[0].style.display = "none";
           document.getElementById('results_metrics').innerHTML = results_str;

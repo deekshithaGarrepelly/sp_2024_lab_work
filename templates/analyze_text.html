@@ -16,12 +16,12 @@
             <tr>
                 <td>Enter text in the box below to analyze</td>
                 <td><textarea id="entered_text" maxlength="2000" name="text_to_analyze" rows="10" columns="20" style="resize:none;"></textarea></td>
-                <td>Select one or more metrics to be computed</td>
+                <td  title="Hold ctrl to select multiple items">Select one or more metrics to be computed (Hold ctrl to select multiple items)</td>
                 <td>
-                    <select name="coh_metrics" size="10" multiple>
-                        <option value="Number_of_words">Number of words</option>
-                        <option value="Number_of_sentences">Number of sentences</option>
-                        <option value="Number_of_paras">Number of paragraphs</option>
+                    <select name="coh_metrics" id="coh_metrics" size="10" multiple>
+                        <option value="number_of_words">Number of words</option>
+                        <option value="number_of_sentences">Number of sentences</option>
+                        <option value="number_of_paras">Number of paragraphs</option>
                         <option value="mean_len_paras">Mean length of paragraphs</option>
                         <option value="std_mean_len_paras">Standard deviation of mean length of paragraphs</option>
                         <option value="mean_len_sents">Mean length of sentences</option>
@@ -33,7 +33,9 @@
                         <option value="noun_overlap_global">Noun overlap global</option>
                         <option value="arg_overlap_local">Argument overlap local</option>
                         <option value="arg_overlap_global">Argument overlap global</option>
-                        <option value="cwr_overlap_global">Content word overlap global</option> 
+                        <option value="stem_overlap_local">Local stem overlap</option>
+                        <option value="stem_overlap_global">Global stem overlap</option> 
+                        <option value="cwr_overlap_global">Content word overlap global</option>
                         <option value="cwr_overlap_local">Content word overlap local</option>
                         <option value="lsa_adj">Average latent semantic similarity between sentences</option>
                         <option value="ttr_cwr">Type token ratio</option>

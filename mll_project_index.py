@@ -800,16 +800,142 @@ def compute_word_information(text,stanza_output,dict_to_put):
   cwr_overlap_global = 0
   num_sents = len(stanza_output.sentences)
   sents_0 = stanza_output.sentences[0]
-  sents_0_nouns = set()
+  prev_nouns = set()
+  all_nouns = dict()
+  arguments_prev = set()
+  all_args = dict()
+  prev_stems = set()
+  all_stems = dict()
   for token in sents_0.words:
     if token.upos == 'NOUN':
-      sents_0_nouns.add(token.text)
-  noun_overlap_adj = 0
+      prev_nouns.add(token.text)
+      if token.text in all_nouns:
+        all_nouns[token.text] = all_nouns[token.text]+1
+      else:
+        all_nouns[token.text] = 1
+    if token.upos == 'NOUN' or token.upos == 'PRON':
+      arguments_prev.add(token.lemma)
+      if token.lemma in all_args:
+        all_args[token.lemma] = all_args[token.lemma] + 1
+      else:
+        all_args[token.lemma] = 1
+    if token.upos == 'NOUN' or token.upos == 'VERB' or token.upos == 'ADV' or token.upos == 'ADJ':
+      prev_stems.add(token.lemma)
+      if token.lemma in all_stems:
+        all_stems[token.lemma] = all_stems[token.lemma] + 1
+      else:
+        all_stems[token.lemma] = 1
   if num_sents > 1:
     for i in range(1,num_sents):
       curr_sent = stanza_output.sentences[i]
       curr_nouns = set()
+      curr_args = set()
+      curr_noun_lemmas = set()
+      curr_stems_lemmas = set()
       for word in curr_sent.words:
+        if word.upos == 'NOUN':
+          curr_nouns.add(word.text)
+          curr_noun_lemmas.add(word.lemma)
+          if word.text in all_nouns:
+            all_nouns[word.text] = all_nouns[word.text]+1
+          else:
+            all_nouns[word.text] = 1
+        if word.upos == 'NOUN' or word.upos == 'PRON':
+          curr_args.add(word.lemma)
+          if word.lemma in all_args:
+            all_args[word.lemma] = all_args[word.lemma] + 1
+          else:
+            all_args[word.lemma] = 1
+        if word.upos == 'NOUN' or word.upos == 'VERB' or word.upos == 'ADV' or word.upos == 'ADJ':
+          curr_stems_lemmas.add(word.lemma)
+          if word.lemma in all_stems:
+            all_stems[word.lemma] = all_stems[word.lemma] + 1
+          else:
+            all_stems[word.lemma] = 1
+      if len(curr_nouns.intersection(prev_nouns)) > 0:
+        noun_overlap_adj+=1
+      if len(curr_args.intersection(arguments_prev)) > 0:
+        arg_overlap_local+=1
+      if len(curr_noun_lemmas.intersection(prev_stems)) > 0:
+        stem_overlap_local+=1
+      prev_nouns = curr_nouns
+      arguments_prev = curr_args
+      prev_stems = curr_stems_lemmas
+  noun_overlap_adj/=num_sents
+  arg_overlap_local/=num_sents
+  stem_overlap_local/=num_sents
+  dict_to_put['Noun overlap adjacent'] = noun_overlap_adj
+  dict_to_put['Argument overlap adjacent'] = arg_overlap_local
+  dict_to_put['Stem overlap adjacent'] = stem_overlap_local
+  for i in range(num_sents):
+    curr_sent = stanza_output.sentences[i]
+    curr_nouns = dict()
+    curr_args = dict()
+    curr_nouns_lemmas = dict()
+    for word in curr_sent.words:
+      if word.upos == 'NOUN':
+        if word.text in curr_nouns:
+          curr_nouns[word.text] = curr_nouns[word.text] + 1
+        else:
+          curr_nouns[word.text] = 1
+        if word.lemma in curr_nouns_lemmas:
+          curr_noun_lemmas[word.lemma] = curr_noun_lemmas[word.lemma] + 1
+        else:
+          curr_noun_lemmas[word.lemma] = 1
+      if word.upos == 'NOUN' or word.upos == 'PRON':
+        if word.lemma in curr_args:
+          curr_args[word.lemma] = curr_args[word.lemma] +1
+        else:
+          curr_args[word.lemma] = 1
+    for x in curr_nouns:
+      if x in all_nouns:
+        all_nouns[x] = all_nouns[x] - curr_nouns[x]
+      if all_nouns[x] <= 0:
+        del all_nouns[x]
+    for x in curr_args:
+      if x in all_args:
+        all_args[x] = all_args[x] - curr_args[x]
+      if all_args[x] <= 0:
+        del all_args[x]
+    for x in curr_noun_lemmas:
+      if x in all_stems:
+        all_stems[x] = all_stems[x] - curr_noun_lemmas[x]
+      if all_stems[x] <= 0:
+        del all_stems[x]
+    found_overlap = False
+    found_overlap_arg = False
+    found_stem_overlap_global = False
+    for x in curr_nouns:
+      if x in all_nouns:
+        found_overlap = True
+      all_nouns[x] = all_nouns[x] + curr_nouns[x]
+    for x in curr_noun_lemmas:
+      if x in all_stems:
+        found_stem_overlap_global = True
+      all_stems[x] = all_stems[x] + curr_noun_lemmas[x]
+    if found_overlap:
+      noun_overlap_global+=1
+    for x in curr_args:
+      if x in all_args:
+        found_overlap_arg = True
+      all_args[x] = all_args[x] + curr_args[x]
+    if found_overlap_arg:
+      arg_overlap_global+=1
+    if found_stem_overlap_global:
+      stem_overlap_global+=1
+  noun_overlap_global/=num_sents
+  dict_to_put['Noun overlap global'] = noun_overlap_global
+  arg_overlap_global/=num_sents
+  dict_to_put['Argument overlap global'] = arg_overlap_global
+  stem_overlap_global/=num_sents
+  dict_to_put['Global stem overlap'] = stem_overlap_global
+
+
+
+        
+
+
+
 
 
     

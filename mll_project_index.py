@@ -15,6 +15,8 @@ import stanza.models
 import re
 from stanza.pipeline.core import DownloadMethod
 from nltk.corpus import wordnet as wn
+from ntlk.corpus import stopwords
+from collections import Counter
 app = Flask(__name__)
 uri = "mongodb+srv://deekshitha1425:KQhXiEZaNhoiW606@cluster0.kzjipbi.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 client = MongoClient(uri, server_api=ServerApi('1'))
@@ -48,552 +50,7 @@ for x in values_coh_metrics:
   dict_coh_metrics[x] = start
   start = start + 1
 print(f"dict_coh_metrics : {dict_coh_metrics}")
-def number_of_words(text,stanza_output):
-  return len(text.split())
-
-funs_to_call.append(number_of_words)
-
-def number_of_sentences(text,stanza_output):
-  return len(stanza_output.sentences)
-
-funs_to_call.append(number_of_sentences)
-
-def number_of_paras(text,stanza_output):
-  return len(re.split(r"\n\n",text))
-
-funs_to_call.append(number_of_paras)
-
-def mean_len_paras(text,stanza_output):
-  paras = re.split(r"\n\n",text)
-  mean_len = 0
-  for para in paras:
-    para = para.strip("\n")
-    mean_len += len(pipe_stanza(para).sentences)
-  mean_len = mean_len/len(paras)
-  return mean_len
-
-funs_to_call.append(mean_len_paras)
-
-def std_mean_len_paras(text,stanza_output):
-  paras = re.split(r"\n\n",text)
-  len_paras = []
-  for para in paras:
-    len_paras.append(len(para.sentences))
-  num_paras = len(len_paras)
-  mean_len = sum(len_paras)/num_paras
-  std = 0
-  if num_paras > 1:
-    for x in len_paras:
-      std+=(x-mean_len)**2
-    std/=(num_paras-1)
-    std**=0.5
-  return std
-
-funs_to_call.append(std_mean_len_paras)
-
-def mean_len_sents(text,stanza_output):
-  len_sents = []
-  for sent in stanza_output.sentences:
-    len_sents.append(len(sent.trim().split()))
-  mean_len_sent = sum(len_sents)/len(len_sents)
-  return mean_len_sent
-
-funs_to_call.append(mean_len_sents)
-
-def std_mean_len_sents(text,stanza_output):
-  len_sents = []
-  for sent in stanza_output.sentences:
-    len_sents.append(len(sent.trim().split()))
-  mean_len_sent = sum(len_sents)/len(len_sents)
-  std = 0
-  if len(len_sents)>1:
-    for x in len_sents:
-      std+=(x-mean_len_sent)**2
-    std/=(len(len_sents)-1)
-    std**=0.5
-  return std
-
-funs_to_call.append(std_mean_len_sents)
-
-def mean_num_sylls(text,stanza_output):
-  return textstat.syllable_count(text)
-
-funs_to_call.append(mean_num_sylls)
-
-def mean_num_letters(text,stanza_output):
-  words = text.split()
-  num_letters = 0
-  for word in words:
-    num_letters+=len(word)
-  return num_letters/len(words)
-
-funs_to_call.append(mean_num_letters)
-
-def std_mean_num_letters(text,stanza_output):
-  words = text.split()
-  words_len = []
-  for word in words:
-    words_len.append(len(word))
-  std = 0
-  if len(words_len)>1:
-    mean = sum(words_len)/len(words_len)
-    for x in words_len:
-      std+=(x-mean)**2
-    std/=(len(words_len)-1)
-    std = std**0.5
-  return std
-
-funs_to_call.append(std_mean_num_letters)
-
-def noun_overlap_local(text,stanza_output):
-  prev_sent = stanza_output.sentences[0]
-  num_sents = len(stanza_output.sentences)
-  overlap = 0
-  prev_nouns = set()
-  for token in prev_sent.words:
-    if token.upos == 'NOUN':
-      prev_nouns.add(token.text)
-  if num_sents > 1:
-    for i in range(1,num_sents):
-      curr_sent = stanza_output.sentences[i]
-      curr_nouns = set()
-      for token in curr_sent.words:
-        if token.upos=='NOUN':
-          curr_nouns.add(token.text)
-      if len(curr_nouns.intersection(prev_nouns))>0:
-        overlap+=1
-      prev_nouns = curr_nouns
-  return overlap/num_sents
-
-funs_to_call.append(noun_overlap_local)
-
-def noun_overlap_global(text,stanza_output):
-  global_nouns_dict = dict()
-  for sent in stanza_output.sentences:
-    for token in sent.words:
-      if token.upos=='NOUN':
-        if token.text in global_nouns_dict:
-          global_nouns_dict[token.text] = global_nouns_dict[token.text]+1
-        else:
-          global_nouns_dict[token.text] = 1
-  overlap = 0
-  for sent in stanza_output.sentences:
-    curr_nouns = dict()
-    found_overlap = False
-    for token in sent.words:
-      if token.upos == 'NOUN':
-        if token.text in curr_nouns:
-          curr_nouns[token.text] = curr_nouns[token.text]+1
-        else:
-          curr_nouns[token.text] = 1
-    for x in curr_nouns:
-      global_nouns_dict[x] = global_nouns_dict[x]-curr_nouns[x]
-      if global_nouns_dict[x] <= 0:
-        del global_nouns_dict[x]
-    for x in curr_nouns:
-      if x in global_nouns_dict:
-        found_overlap = True
-        global_nouns_dict[x] = global_nouns_dict[x] + curr_nouns[x]
-      else:
-        global_nouns_dict[x] = curr_nouns[x]
-    if found_overlap:
-      overlap+=1
-  return overlap/len(stanza_output.sentences)
-
-funs_to_call.append(noun_overlap_global)
-
-def arg_overlap_local(text,stanza_output):
-  overlap = 0
-  prev_args = set()
-  sent_1 = stanza_output.sentences[0]
-  num_sents = len(stanza_output.sentences)
-  if num_sents > 1:
-    for token in sent_1.words:
-      if token.upos == 'NOUN' or token.upos =='PRON':
-        prev_args.add(token.lemma)
-    for i in range(1,num_sents):
-      curr_sent = stanza_output.sentences[i]
-      curr_args = set()
-      for token in curr_sent.words:
-        if token.upos == 'NOUN' or token.upos == 'PRON':
-          curr_args.add(token.lemma)
-      if len(prev_args.intersection(curr_args)) > 0:
-        overlap = overlap + 1
-      prev_args = curr_args
-  return overlap/num_sents
-
-funs_to_call.append(arg_overlap_local)
-
-def arg_overlap_global(text,stanza_output):
-  overlap = 0
-  all_args = dict()
-  for sent in stanza_output.sentences:
-    for token in sent.words:
-      if token.upos == 'NOUN' or token.upos == 'PRON':
-        if token.lemma in all_args:
-          all_args[token.lemma] = all_args[token.lemma] + 1
-        else:
-          all_args[token.lemma] = 1
-  num_sents = len(stanza_output.sentences)
-  if num_sents > 1:
-    for sent in stanza_output.sentences:
-      curr_args = dict()
-      found_overlap = False
-      for token in sent.words:
-        if token.upos=='NOUN' or token.upos=='PRON':
-          if token.lemma in curr_args:
-            curr_args[token.lemma] = curr_args[token.lemma] + 1
-          else:
-            curr_args[token.lemma] = 1
-      for x in curr_args:
-        all_args[x] = all_args[x] - curr_args[x]
-        if all_args[x]<=0:
-          del all_args[x]
-      for x in curr_args:
-        if x in all_args:
-          found_overlap = True
-          all_args[x] = all_args[x] + curr_args[x]
-        else:
-          all_args[x] = curr_args[x]
-      if found_overlap:
-        overlap = overlap + 1
-  return overlap/num_sents
-
-funs_to_call.append(arg_overlap_global)
-
-def stem_overlap_local(text,stanza_output):
-  overlap = 0
-  sent_0 = stanza_output.sentences[0]
-  prev_stem = set()
-  num_sentences = len(stanza_output.sentences)
-  if num_sentences > 1:
-    for token in sent_0.words:
-      if token.upos == 'NOUN' or token.upos == 'VERB' or token.upos =='ADV' or token.upos=='ADJ':
-        prev_stem.add(token.lemma)
-    for i in range(1,num_sentences):
-      curr_sent = stanza_output.sentences[i]
-      curr_stems = set()
-      for token in curr_sent:
-        if token.upos == 'NOUN':
-          curr_stems.add(token.lemma)
-      if len(curr_stems.intersection(prev_stem))>0:
-        overlap+=1
-      prev_stem = set()
-      for token in curr_sent:
-        if token.upos == 'NOUN' or token.upos == 'VERB' or token.upos == 'ADV' or token.upos == 'ADJ':
-          prev_stem.add(token.lemma)
-    overlap/=num_sentences
-  return overlap
-
-funs_to_call.append(stem_overlap_local)
-
-def stem_overlap_global(text,stanza_output):
-  overlap = 0
-  all_stems = dict()
-  num_sentences = len(stanza_output.sentences)
-  if num_sentences > 1:
-    for sent in stanza_output.sentences:
-      for token in sent.words:
-        if token.upos == 'NOUN' or token.upos == 'ADV' or token.upos == 'ADJ' or token.upos=='VERB':
-          if token.lemma in all_stems:
-            all_stems[token.lemma] = all_stems[token.lemma] + 1
-          else:
-            all_stems[token.lemma] = 1
-    for sent in stanza_output.sentences:
-      found_overlap = False
-      curr_stems_dict = dict()
-      for token in sent.words:
-        if token.upos == 'NOUN':
-          if token.lemma in curr_stems_dict:
-            curr_stems_dict[token.lemma] = curr_stems_dict[token.lemma] + 1
-          else:
-            curr_stems_dict[token.lemma] = 1
-      for x in curr_stems_dict:
-        all_stems[x] = all_stems[x] - curr_stems_dict[x]
-        if all_stems[x] <=0:
-          del all_stems[x]
-      for x in curr_stems_dict:
-        if x in all_stems:
-          found_overlap = True
-          all_stems[x] = all_stems[x]+curr_stems_dict[x]
-        else:
-          all_stems[x] = all_stems[x]+curr_stems_dict[x]
-      if found_overlap:
-        overlap+=1
-    return overlap/num_sentences
-
-
-funs_to_call.append(stem_overlap_global)
-
-def cwr_overlap_global(text,stanza_output):
-  overlap = 0
-  all_cwrs = dict()
-  num_sents = len(stanza_output.sentences)
-  if num_sents > 1:
-    for sent in stanza_output.sentences:
-      for token in sent.words:
-        if token.upos == 'NOUN' or token.upos == 'VERB' or token.upos =='ADV' or token.upos=='ADJ':
-          if token.text in all_cwrs:
-            all_cwrs[token.text] = all_cwrs[token.text]+1
-          else:
-            all_cwrs[token.text] = 1
-    for sent in stanza_output.sentences:
-      curr_cwr = []
-      for token in sent.words:
-        if token.upos == 'NOUN' or token.upos == 'VERB' or token.upos == 'ADV' or token.upos=='ADJ':
-          curr_cwr.append(token.text)
-          if token.text in all_cwrs:
-            all_cwrs[token.text] = all_cwrs[token.text] - 1
-            if all_cwrs[token.text] <= 0:
-              del all_cwrs[token.text]
-      overlap_curr = 0
-      for x in curr_cwr:
-        if x in all_cwrs:
-          overlap_curr+=1
-      overlap+=(overlap_curr/len(curr_cwr))
-      for x in curr_cwr:
-        if x in all_cwrs:
-          all_cwrs[x] = all_cwrs[x]+1
-        else:
-          all_cwrs[x] = 1
-  return overlap/num_sents
-
-funs_to_call.append(cwr_overlap_global)
-
-def cwr_overlap_local(text,stanza_output):
-  overlap = 0
-  num_sents = len(stanza_output.sentences)
-  if num_sents > 1:
-    sent_0 = stanza_output.sentences[0]
-    prev_cwr = set()
-    for token in sent_0.words:
-      if token.upos == 'NOUN' or token.upos == 'VERB' or token.upos == 'ADV' or token.upos == 'ADJ':
-        prev_cwr.add(token.text)
-    for i in range(1,num_sents):
-      sent_i = stanza_output.sentences[i]
-      curr_cwr = []
-      curr_cwr_set = set()
-      for token in sent_i.words:
-        if token.upos == 'NOUN' or token.upos == 'VERB' or token.upos == 'ADV' or token.upos == 'ADJ':
-          curr_cwr.append(token.text)
-          curr_cwr_set.add(token.text)
-      curr_overlap = 0
-      for x in curr_cwr:
-        if x in prev_cwr:
-          curr_overlap+=1
-      curr_overlap/=len(curr_cwr)
-      overlap+=curr_overlap
-      prev_cwr = curr_cwr_set
-  return overlap
-
-funs_to_call.append(cwr_overlap_local)
-
-def lsa_adj(text,stanza_output):
-  #to-do
-  return 0
-
-funs_to_call.append(lsa_adj)
-
-def ttr_cwr(text,stanza_output):
-  types_cwr = set()
-  num_tokens_cwr = 0
-  for sent in stanza_output.sentences:
-    for token in sent.words:
-      if token.upos == 'NOUN' or token.upos == 'VERB' or token.upos == 'ADV' or token.upos == 'ADJ':
-        types_cwr.add(token.text)
-        num_tokens_cwr+=1
-  return len(types_cwr)/num_tokens_cwr
-
-funs_to_call.append(ttr_cwr)
-
-def mod_per_np(text,stanza_output):
-  #to-do
-  return 0
-
-funs_to_call.append(mod_per_np)
-
-def syn_med_pos(text,stanza_output):
-  #to-do
-  return 0
-
-funs_to_call.append(syn_med_pos)
-
-def syn_med_wrd(text,stanza_output):
-  #to-do
-  return 0
-
-funs_to_call.append(syn_med_wrd)
-
-def syn_med_lemmas(text,stanza_output):
-  #to-do
-  return 0
-
-funs_to_call.append(syn_med_lemmas)
-
-def syn_sim_adj(text,stanza_output):
-  #to-do
-  return 0
-
-funs_to_call.append(syn_sim_adj)
-
-def noun_incidence(text,stanza_output):
-  all_poses = []
-  for sent in stanza_output.sentences:
-    for token in sent.words:
-      all_poses.append(token.upos)
-  prev_count = 0
-  for i in range(0,min(1000,len(all_poses))):
-    if all_poses[i] == 'NOUN':
-      prev_count+=1
-  incidences_until_i = []
-  if all_poses[0]=='NOUN':
-    incidences_until_i.append(1)
-  else:
-    incidences_until_i.append(0)
-  for i in range(1,len(all_poses)):
-    if all_poses[i] == 'NOUN':
-      incidences_until_i.append(incidences_until_i[i-1]+1)
-    else:
-      incidences_until_i.append(incidences_until_i[i-1])
-  incidences = []
-  incidences.append(prev_count)
-  for i in range(1,len(all_poses)):
-    j = min(i+1000,len(all_poses))
-    incidences.append(incidences_until_i[j]-incidences_until_i[i-1])
-  return sum(incidences)/len(incidences)
-
-funs_to_call.append(noun_incidence)
-
-def verb_incidence(text,stanza_output):
-  all_poses = []
-  for sent in stanza_output.sentences:
-    for token in sent.words:
-      all_poses.append(token.upos)
-  prev_count = 0
-  for i in range(0,min(1000,len(all_poses))):
-    if all_poses[i] == 'VERB':
-      prev_count+=1
-  incidences_until_i = []
-  if all_poses[0]=='VERB':
-    incidences_until_i.append(1)
-  else:
-    incidences_until_i.append(0)
-  for i in range(1,len(all_poses)):
-    if all_poses[i] == 'VERB':
-      incidences_until_i.append(incidences_until_i[i-1]+1)
-    else:
-      incidences_until_i.append(incidences_until_i[i-1])
-  incidences = []
-  incidences.append(prev_count)
-  for i in range(1,len(all_poses)):
-    j = min(i+1000,len(all_poses))
-    incidences.append(incidences_until_i[j]-incidences_until_i[i-1])
-  return sum(incidences)/len(incidences)
-
-funs_to_call.append(verb_incidence)
-
-def adj_incidence(text,stanza_output):
-  all_poses = []
-  for sent in stanza_output.sentences:
-    for token in sent.words:
-      all_poses.append(token.upos)
-  prev_count = 0
-  for i in range(0,min(1000,len(all_poses))):
-    if all_poses[i] == 'ADJ':
-      prev_count+=1
-  incidences_until_i = []
-  if all_poses[0]=='ADJ':
-    incidences_until_i.append(1)
-  else:
-    incidences_until_i.append(0)
-  for i in range(1,len(all_poses)):
-    if all_poses[i] == 'ADJ':
-      incidences_until_i.append(incidences_until_i[i-1]+1)
-    else:
-      incidences_until_i.append(incidences_until_i[i-1])
-  incidences = []
-  incidences.append(prev_count)
-  for i in range(1,len(all_poses)):
-    j = min(i+1000,len(all_poses))
-    incidences.append(incidences_until_i[j]-incidences_until_i[i-1])
-  return sum(incidences)/len(incidences)
-
-funs_to_call.append(adj_incidence)
-
-def adv_incidence(text,stanza_output):
-  all_poses = []
-  for sent in stanza_output.sentences:
-    for token in sent.words:
-      all_poses.append(token.upos)
-  prev_count = 0
-  for i in range(0,min(1000,len(all_poses))):
-    if all_poses[i] == 'ADV':
-      prev_count+=1
-  incidences_until_i = []
-  if all_poses[0]=='ADV':
-    incidences_until_i.append(1)
-  else:
-    incidences_until_i.append(0)
-  for i in range(1,len(all_poses)):
-    if all_poses[i] == 'ADV':
-      incidences_until_i.append(incidences_until_i[i-1]+1)
-    else:
-      incidences_until_i.append(incidences_until_i[i-1])
-  incidences = []
-  incidences.append(prev_count)
-  for i in range(1,len(all_poses)):
-    j = min(i+1000,len(all_poses))
-    incidences.append(incidences_until_i[j]-incidences_until_i[i-1])
-  return sum(incidences)/len(incidences)
-
-funs_to_call.append(adv_incidence)
-
-def avg_freq_cwr(text,stanza_output):
-  #to-do
-  return 0
-
-funs_to_call.append(avg_freq_cwr)
-
-def avg_freq_all(text,stanza_output):
-  #to-do
-  return 0
-
-funs_to_call.append(avg_freq_all)
-
-def avg_freq_min(text,stanza_output):
-  #to-do
-  return 0
-
-funs_to_call.append(avg_freq_min)
-
-def polysemy(text,stanza_output):
-  total_cwr = 0
-  total_freq = 0
-  for sent in stanza_output.sentences:
-    for token in sent.words:
-      if token.upos == 'NOUN' or token.upos == 'VERB' or token.upos == 'ADV' or token.upos == 'ADJ':
-        total_cwr+=1
-        total_freq+=len(wn.synsets(token.text,lang="spa"))
-  return total_freq/total_cwr
-
-funs_to_call.append(polysemy)
-
-def hypernymy(text,stanza_output):
-  #to-do
-  return 0
-
-funs_to_call.append(hypernymy)
-
-def flesch_reading_ease(text,stanza_output):
-  return textstat.flesch_reading_ease(text)
-
-funs_to_call.append(flesch_reading_ease)
-
-def flesch_kincaid(text,stanza_output):
-  return textstat.flesch_kincaid_grade(text)
-
-funs_to_call.append(flesch_kincaid)
-
+stop_spanish = set(stopwords.words('spanish'))
 
 @app.route('/')
 def homepage():
@@ -707,8 +164,6 @@ def searchWithCriteria():
 
 @app.route('/computeMetrics',methods=['GET'])
 def computeMetrics():
-  global pipe_stanza
-  global funs_to_call
   metricsVsValues = {}
   text = request.args.get('enteredText')
   metrics_to_compute = json.loads(request.args.get('metricsToCompute'))
@@ -716,10 +171,12 @@ def computeMetrics():
   text = text.strip('\n\s+')
   print(f"text is {text}")
   computed_staza = pipe_stanza(text)
-  for x in metrics_to_compute:
-    print(f"isis : {x}")
-    metricsVsValues[x] = funs_to_call[dict_coh_metrics[x]](text,computed_staza)
-    print(f"{metricsVsValues[x]}")
+  metricsVsValues = compute_descriptive_metrics(text,computed_staza,metricsVsValues)
+  metricsVsValues = compute_referential_cohesion(text,computed_staza,metricsVsValues)
+  metricsVsValues = latent_semantic_analysis(text,computed_staza,metricsVsValues)
+  metricsVsValues = lexical_diversity(text,computed_staza,metricsVsValues)
+  metricsVsValues = syntactic_complexity(text,computed_staza,metricsVsValues)
+  metricsVsValues = word_information(text,computed_staza,metricsVsValues)
   return metricsVsValues
 
 @app.route('/landing_page')
@@ -789,7 +246,7 @@ def compute_descriptive_metrics(text,stanza_output,dict_to_put):
   dict_to_put['Standard deviation of mean number of letters in words'] = std_mean_num_letters
   return dict_to_put
 
-def compute_word_information(text,stanza_output,dict_to_put):
+def compute_referential_cohesion(text,stanza_output,dict_to_put):
   noun_overlap_adj = 0
   noun_overlap_global = 0
   arg_overlap_local = 0
@@ -806,6 +263,8 @@ def compute_word_information(text,stanza_output,dict_to_put):
   all_args = dict()
   prev_stems = set()
   all_stems = dict()
+  prev_cwr = set()
+  all_cwr = dict()
   for token in sents_0.words:
     if token.upos == 'NOUN':
       prev_nouns.add(token.text)
@@ -821,10 +280,15 @@ def compute_word_information(text,stanza_output,dict_to_put):
         all_args[token.lemma] = 1
     if token.upos == 'NOUN' or token.upos == 'VERB' or token.upos == 'ADV' or token.upos == 'ADJ':
       prev_stems.add(token.lemma)
+      prev_cwr.add(token.text)
       if token.lemma in all_stems:
         all_stems[token.lemma] = all_stems[token.lemma] + 1
       else:
         all_stems[token.lemma] = 1
+      if token.text in all_cwr:
+        all_cwr[token.text] = all_cwr[token.text] + 1
+      else:
+        all_cwr[token.text] = 1
   if num_sents > 1:
     for i in range(1,num_sents):
       curr_sent = stanza_output.sentences[i]
@@ -832,6 +296,9 @@ def compute_word_information(text,stanza_output,dict_to_put):
       curr_args = set()
       curr_noun_lemmas = set()
       curr_stems_lemmas = set()
+      curr_cwr = []
+      curr_cwr_set = set()
+      curr_cwr_overlap = 0
       for word in curr_sent.words:
         if word.upos == 'NOUN':
           curr_nouns.add(word.text)
@@ -848,30 +315,45 @@ def compute_word_information(text,stanza_output,dict_to_put):
             all_args[word.lemma] = 1
         if word.upos == 'NOUN' or word.upos == 'VERB' or word.upos == 'ADV' or word.upos == 'ADJ':
           curr_stems_lemmas.add(word.lemma)
+          curr_cwr.append(word.text)
+          curr_cwr_set.add(word.text)
           if word.lemma in all_stems:
             all_stems[word.lemma] = all_stems[word.lemma] + 1
           else:
             all_stems[word.lemma] = 1
+          if word.text in all_cwr:
+            all_cwr[token.text] = all_cwr[token.text] + 1
+          else:
+            all_cwr[token.text] = 1
       if len(curr_nouns.intersection(prev_nouns)) > 0:
         noun_overlap_adj+=1
       if len(curr_args.intersection(arguments_prev)) > 0:
         arg_overlap_local+=1
       if len(curr_noun_lemmas.intersection(prev_stems)) > 0:
         stem_overlap_local+=1
+      for x in curr_cwr:
+        if x in prev_cwr:
+          curr_cwr_overlap = curr_cwr_overlap + 1
+      curr_cwr_overlap/=len(curr_cwr)
+      cwr_overlap_local = cwr_overlap_local + curr_cwr_overlap
       prev_nouns = curr_nouns
       arguments_prev = curr_args
       prev_stems = curr_stems_lemmas
+      prev_cwr = curr_cwr
   noun_overlap_adj/=num_sents
   arg_overlap_local/=num_sents
   stem_overlap_local/=num_sents
   dict_to_put['Noun overlap adjacent'] = noun_overlap_adj
   dict_to_put['Argument overlap adjacent'] = arg_overlap_local
   dict_to_put['Stem overlap adjacent'] = stem_overlap_local
+  dict_to_put['Content word overlap local'] = cwr_overlap_local
   for i in range(num_sents):
     curr_sent = stanza_output.sentences[i]
     curr_nouns = dict()
     curr_args = dict()
     curr_nouns_lemmas = dict()
+    curr_cwr_dict = dict()
+    curr_cwr_list = []
     for word in curr_sent.words:
       if word.upos == 'NOUN':
         if word.text in curr_nouns:
@@ -887,38 +369,65 @@ def compute_word_information(text,stanza_output,dict_to_put):
           curr_args[word.lemma] = curr_args[word.lemma] +1
         else:
           curr_args[word.lemma] = 1
+      if word.upos == 'NOUN' or word.upos == 'VERB' or word.upos == 'ADV' or word.upos == 'ADJ':
+        if word.text in curr_cwr_dict:
+          curr_cwr_dict[word.text] = curr_cwr_dict[word.text] + 1
+        else:
+          curr_cwr_dict[word.text] = 1
+        curr_cwr_list.append(word.text)
     for x in curr_nouns:
       if x in all_nouns:
         all_nouns[x] = all_nouns[x] - curr_nouns[x]
-      if all_nouns[x] <= 0:
-        del all_nouns[x]
+        if all_nouns[x] <= 0:
+          del all_nouns[x]
     for x in curr_args:
       if x in all_args:
         all_args[x] = all_args[x] - curr_args[x]
-      if all_args[x] <= 0:
-        del all_args[x]
+        if all_args[x] <= 0:
+          del all_args[x]
     for x in curr_noun_lemmas:
       if x in all_stems:
         all_stems[x] = all_stems[x] - curr_noun_lemmas[x]
-      if all_stems[x] <= 0:
-        del all_stems[x]
+        if all_stems[x] <= 0:
+          del all_stems[x]
+    for x in curr_cwr_dict:
+      if x in all_cwr:
+        all_cwr[x] = all_cwr[x] - curr_cwr_dict[x]
+        if all_cwr[x]<=0:
+          del all_cwr[x]
     found_overlap = False
     found_overlap_arg = False
     found_stem_overlap_global = False
+    curr_cwr_overlap = 0
+    for x in curr_cwr_list:
+      if x in all_cwr:
+        curr_cwr_overlap+=1
+    cwr_overlap_global+=(curr_cwr_overlap/len(curr_cwr_list))
+    for x in curr_cwr_dict:
+      if x in all_cwr:
+        all_cwr[x] = all_cwr[x] + curr_cwr_dict[x]
+      else:
+        all_cwr[x] = curr_cwr_dict[x]
     for x in curr_nouns:
       if x in all_nouns:
         found_overlap = True
-      all_nouns[x] = all_nouns[x] + curr_nouns[x]
+        all_nouns[x] = all_nouns[x] + curr_nouns[x]
+      else:
+        all_nouns[x] = curr_nouns[x]
     for x in curr_noun_lemmas:
       if x in all_stems:
         found_stem_overlap_global = True
-      all_stems[x] = all_stems[x] + curr_noun_lemmas[x]
+        all_stems[x] = all_stems[x] + curr_noun_lemmas[x]
+      else:
+         all_stems[x] = curr_noun_lemmas[x]
     if found_overlap:
       noun_overlap_global+=1
     for x in curr_args:
       if x in all_args:
         found_overlap_arg = True
-      all_args[x] = all_args[x] + curr_args[x]
+        all_args[x] = all_args[x] + curr_args[x]
+      else:
+        all_args[x] = curr_args[x]
     if found_overlap_arg:
       arg_overlap_global+=1
     if found_stem_overlap_global:
@@ -929,17 +438,126 @@ def compute_word_information(text,stanza_output,dict_to_put):
   dict_to_put['Argument overlap global'] = arg_overlap_global
   stem_overlap_global/=num_sents
   dict_to_put['Global stem overlap'] = stem_overlap_global
+  dict_to_put['Global content word overlap'] = cwr_overlap_global
+  return dict_to_put
 
+def latent_semantic_analysis(text,stanza_output,dict_to_put):
+  #to-do
+  return dict_to_put
 
+def lexical_diversity(text,stanza_output,dict_to_put):
+  content_words = set()
+  content_words_count = 0
+  all_words = set()
+  all_words_count = 0
+  for sent in stanza_output.sentences:
+    for token in sent.words:
+      if token.text not in stop_spanish:
+        if token.upos == 'NOUN' or token.upos == 'VERB' or token.upos == 'ADV' or token.upos == 'ADJ':
+          content_words.add(token.text)
+          content_words_count+=1
+        all_words.add(token.text)
+        all_words_count+=1
+  dict_to_put['Lexical Diversity for all words'] = len(all_words)/all_words_count
+  dict_to_put['Lexical Diversity for content words'] = len(content_words)/content_words_count
+  return dict_to_put
 
-        
+def syntactic_complexity(text,stanza_output,dict_to_put):
+  return dict_to_put
 
-
-
-
-
-    
-
+def word_information(text,stanza_output,dict_to_put):
+  avg_freq_all_words = 0
+  avg_freq_content_words = 0
+  all_poses = []
+  words_dict = dict()
+  word_cwr_dict = dict()
+  curr_sent_tokens = []
+  min_freqs = []
+  polysemies = []
+  for sent in stanza_output.sentences:
+    curr_sent_tokens = []
+    for token in sent.words:
+      all_poses.append(token.upos)
+    if token.text not in stop_spanish:
+      curr_sent_tokens.append(token.text)
+      if token.upos == 'NOUN' or token.upos == 'VERB' or token.upos == 'ADV' or token.upos == 'ADJ':
+        polysemies.append(len(wn.synsets(token.text,"spa")))
+        if token.text in word_cwr_dict:
+          word_cwr_dict[token.text] = word_cwr_dict[token.text]+1
+        else:
+          word_cwr_dict[token.text] = 1
+      if token.text in words_dict:
+        words_dict[token.text] = words_dict[token.text] + 1
+      else:
+        words_dict[token.text] = 1
+    counter_words = Counter(curr_sent_tokens)
+    min_freqs.append(counter_words.most_common()[-1][1])
+  dict_to_put['Minimum average frequency of words in all sentences'] = sum(min_freqs)/len(min_freqs)
+  for word in words_dict:
+    avg_freq_all_words+=words_dict[word]
+  avg_freq_all_words/=len(words_dict)
+  dict_to_put['Average frequency of all words'] = avg_freq_all_words
+  for word in word_cwr_dict:
+    avg_freq_content_words+=word_cwr_dict[word]
+  avg_freq_content_words/=len(word_cwr_dict)
+  dict_to_put['Average frequency of content words'] = avg_freq_content_words
+  dict_to_put['Average polysemy of content words'] = sum(polysemies)/len(polysemies)
+  len_poses = len(all_poses)
+  inc_nouns = []
+  inc_adjs = []
+  inc_advs = []
+  inc_verbs = []
+  inc_nouns_win_1 = 0
+  inc_verbs_win_1 = 0
+  inc_adv_win_1 = 0
+  inc_adj_win_1 = 0
+  for i in range(0,min(1000,len_poses)):
+    if all_poses[i] == 'NOUN':
+      inc_nouns_win_1+=1
+    elif all_poses[i] == 'VERB':
+      inc_verbs_win_1+=1
+    elif all_poses[i] == 'ADV':
+      inc_adv_win_1+=1
+    elif all_poses[i] == 'ADJ':
+      inc_adj_win_1+=1
+  inc_nouns.append(inc_nouns_win_1/1000)
+  inc_adjs.append(inc_adj_win_1/1000)
+  inc_advs.append(inc_adv_win_1/1000)
+  inc_verbs.append(inc_verbs_win_1/1000)
+  if len_poses>1000:
+    for i in range(1,len_poses):
+      j = min(i+999,len_poses)
+      if j-i+1==1000:
+        inc_noun_prev = inc_nouns[i-1]
+        inc_verb_prev = inc_verbs[i-1]
+        inc_adv_prev = inc_advs[i-1]
+        inc_adj_prev = inc_adjs[i-1]
+        if all_poses[i-1]=='NOUN':
+          inc_noun_prev-=1
+        elif all_poses[i-1] == 'VERB':
+          inc_verb_prev-=1
+        elif all_poses[i-1] == 'ADV':
+          inc_adv_prev-=1
+        elif all_poses[i-1] == 'ADJ':
+          inc_adj_prev-=1
+        if all_poses[j] == 'NOUN':
+          inc_noun_prev+=1
+        elif all_poses[j] == 'VERB':
+          inc_verb_prev+=1
+        elif all_poses[j] == 'ADV':
+          inc_adv_prev+=1
+        elif all_poses[j] == 'ADJ':
+          inc_adj_prev+=1
+        inc_nouns.append(inc_noun_prev/1000)
+        inc_adjs.append(inc_adj_prev/1000)
+        inc_advs.append(inc_adv_prev/1000)
+        inc_verbs.append(inc_verb_prev/1000)
+  dict_to_put['Noun incidence average'] = sum(inc_nouns)/len(inc_nouns)
+  dict_to_put['Verb incidence average'] = sum(inc_verbs)/len(inc_verbs)
+  dict_to_put['Adverb incidence average'] = sum(inc_advs)/len(inc_advs)
+  dict_to_put['Adjective incidence average'] = sum(inc_adjs)/len(inc_adjs)
+  dict_to_put['Flesch reading ease'] = textstat.flesch_reading_ease(text)
+  dict_to_put['Flesch kincaid grade level'] = textstat.flesch_kincaid_grade(text)
   return dict_to_put
 
 if __name__ == "__main__":

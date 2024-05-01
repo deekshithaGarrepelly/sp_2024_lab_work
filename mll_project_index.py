@@ -8,14 +8,13 @@ from pymongo.server_api import ServerApi
 import re
 import json
 import math
-import spacy
 import stanza
 import textstat
 import stanza.models
 import re
 from stanza.pipeline.core import DownloadMethod
 from nltk.corpus import wordnet as wn
-from ntlk.corpus import stopwords
+from nltk.corpus import stopwords
 from collections import Counter
 app = Flask(__name__)
 uri = "mongodb+srv://deekshitha1425:KQhXiEZaNhoiW606@cluster0.kzjipbi.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
@@ -150,8 +149,7 @@ def searchWithCriteria():
 def computeMetrics():
   metricsVsValues = {}
   text = request.args.get('enteredText')
-  metrics_to_compute = json.loads(request.args.get('metricsToCompute'))
-  print(f"text is {text} and metrics are {metrics_to_compute}")
+  print(f"text is {text}")
   text = text.strip('\n\s+')
   print(f"text is {text}")
   computed_staza = pipe_stanza(text)
@@ -194,7 +192,7 @@ def compute_descriptive_metrics(text,stanza_output,dict_to_put):
   dict_to_put['Standard deviation of mean length of paras'] = std_mean_len_paras
   words_in_sents = []
   for sent in stanza_output.sentences:
-    words_in_sents.append(len(sent.split()))
+    words_in_sents.append(len(sent.words))
   mean_len_sents = sum(words_in_sents)/len(words_in_sents)
   dict_to_put['Mean length of sentences'] = mean_len_sents
   std_mean_len_sents = 0
@@ -298,6 +296,7 @@ def compute_referential_cohesion(text,stanza_output,dict_to_put):
           else:
             all_args[word.lemma] = 1
         if word.upos == 'NOUN' or word.upos == 'VERB' or word.upos == 'ADV' or word.upos == 'ADJ':
+          print(f'entered this {word.text}')
           curr_stems_lemmas.add(word.lemma)
           curr_cwr.append(word.text)
           curr_cwr_set.add(word.text)
@@ -306,9 +305,13 @@ def compute_referential_cohesion(text,stanza_output,dict_to_put):
           else:
             all_stems[word.lemma] = 1
           if word.text in all_cwr:
-            all_cwr[token.text] = all_cwr[token.text] + 1
+            print(f'entered if {word.text}')
+            all_cwr[word.text] = all_cwr[word.text] + 1
+            print(f'all_cwr is {all_cwr}')
           else:
-            all_cwr[token.text] = 1
+            print(f'entered else : {word.text}')
+            all_cwr[word.text] = 1
+            print(f'all_cwr is {all_cwr}')
       if len(curr_nouns.intersection(prev_nouns)) > 0:
         noun_overlap_adj+=1
       if len(curr_args.intersection(arguments_prev)) > 0:
@@ -318,7 +321,8 @@ def compute_referential_cohesion(text,stanza_output,dict_to_put):
       for x in curr_cwr:
         if x in prev_cwr:
           curr_cwr_overlap = curr_cwr_overlap + 1
-      curr_cwr_overlap/=len(curr_cwr)
+      if len(curr_cwr)>0:
+        curr_cwr_overlap/=len(curr_cwr)
       cwr_overlap_local = cwr_overlap_local + curr_cwr_overlap
       prev_nouns = curr_nouns
       arguments_prev = curr_args
@@ -331,11 +335,12 @@ def compute_referential_cohesion(text,stanza_output,dict_to_put):
   dict_to_put['Argument overlap adjacent'] = arg_overlap_local
   dict_to_put['Stem overlap adjacent'] = stem_overlap_local
   dict_to_put['Content word overlap local'] = cwr_overlap_local
+  print(f"collated all_cwr is {all_cwr}")
   for i in range(num_sents):
     curr_sent = stanza_output.sentences[i]
     curr_nouns = dict()
     curr_args = dict()
-    curr_nouns_lemmas = dict()
+    curr_noun_lemmas = dict()
     curr_cwr_dict = dict()
     curr_cwr_list = []
     for word in curr_sent.words:
@@ -344,7 +349,7 @@ def compute_referential_cohesion(text,stanza_output,dict_to_put):
           curr_nouns[word.text] = curr_nouns[word.text] + 1
         else:
           curr_nouns[word.text] = 1
-        if word.lemma in curr_nouns_lemmas:
+        if word.lemma in curr_noun_lemmas:
           curr_noun_lemmas[word.lemma] = curr_noun_lemmas[word.lemma] + 1
         else:
           curr_noun_lemmas[word.lemma] = 1
@@ -383,10 +388,13 @@ def compute_referential_cohesion(text,stanza_output,dict_to_put):
     found_overlap_arg = False
     found_stem_overlap_global = False
     curr_cwr_overlap = 0
+    print(f"curr_cwr_list is {curr_cwr_list}")
+    print(f"all_cwr is {all_cwr}")
     for x in curr_cwr_list:
       if x in all_cwr:
         curr_cwr_overlap+=1
-    cwr_overlap_global+=(curr_cwr_overlap/len(curr_cwr_list))
+    if len(curr_cwr_list)>0:
+      cwr_overlap_global+=(curr_cwr_overlap/len(curr_cwr_list))
     for x in curr_cwr_dict:
       if x in all_cwr:
         all_cwr[x] = all_cwr[x] + curr_cwr_dict[x]
@@ -465,7 +473,7 @@ def word_information(text,stanza_output,dict_to_put):
     if token.text not in stop_spanish:
       curr_sent_tokens.append(token.text)
       if token.upos == 'NOUN' or token.upos == 'VERB' or token.upos == 'ADV' or token.upos == 'ADJ':
-        polysemies.append(len(wn.synsets(token.text,"spa")))
+        polysemies.append(len(wn.synsets(token.text,lang='spa')))
         if token.text in word_cwr_dict:
           word_cwr_dict[token.text] = word_cwr_dict[token.text]+1
         else:

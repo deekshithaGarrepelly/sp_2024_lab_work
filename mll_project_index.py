@@ -16,6 +16,7 @@ from stanza.pipeline.core import DownloadMethod
 from nltk.corpus import wordnet as wn
 from nltk.corpus import stopwords
 from collections import Counter
+from Levenshtein import distance
 app = Flask(__name__)
 uri = "mongodb+srv://deekshitha1425:KQhXiEZaNhoiW606@cluster0.kzjipbi.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 client = MongoClient(uri, server_api=ServerApi('1'))
@@ -435,6 +436,24 @@ def compute_referential_cohesion(text,stanza_output,dict_to_put):
 
 def latent_semantic_analysis(text,stanza_output,dict_to_put):
   #to-do
+  num_sentences = len(stanza_output.sentences)
+  sent_0 = stanza_output.sentences[0]
+  prev_words = set()
+  lsa_adj = 0
+  for word in sent_0.words:
+    if word.text not in stop_spanish:
+      prev_words.add(word.text)
+  if num_sentences > 1:
+    for i in range(1,num_sentences):
+      curr_sent = stanza_output.sentences[i]
+      curr_words = set()
+      for token in curr_sent.words:
+        if token.text not in stop_spanish:
+          curr_words.add(token.text)
+      if len(curr_words)>0:
+        lsa_adj+=len(curr_words.intersection(prev_words))/(len(curr_words))
+      prev_words = curr_words
+  dict_to_put['Latent semantic analysis adjacent'] = lsa_adj/num_sentences
   return dict_to_put
 
 def lexical_diversity(text,stanza_output,dict_to_put):
@@ -455,6 +474,40 @@ def lexical_diversity(text,stanza_output,dict_to_put):
   return dict_to_put
 
 def syntactic_complexity(text,stanza_output,dict_to_put):
+  min_edit_pos = 0
+  min_edit_word = 0
+  min_edit_lemma = 0
+  num_sents = len(stanza_output.sentences)
+  if num_sents>1:
+    sent_0 = stanza_output.sentences[0]
+    prev_words = []
+    prev_lemmas = []
+    prev_poses = []
+    for word in sent_0.words:
+      prev_words.append(word.text)
+      prev_lemmas.append(word.lemma)
+      prev_poses.append(word.upos)
+    for i in range(1,num_sents):
+      sent_i = stanza_output.sentences[i]
+      curr_words = []
+      curr_lemmas = []
+      curr_poses = []
+      for word in sent_i.words:
+        curr_words.append(word.text)
+        curr_lemmas.append(word.lemma)
+        curr_poses.append(word.upos)
+      min_edit_pos+=distance(prev_poses,prev_poses)
+      min_edit_word+=distance(prev_words,curr_words)
+      min_edit_lemma+=distance(prev_lemmas,curr_lemmas)
+      prev_words = curr_words
+      prev_lemmas = curr_lemmas
+      prev_poses = curr_poses
+    min_edit_pos/=num_sents
+    min_edit_word/=num_sents
+    min_edit_lemma/=num_sents
+    dict_to_put['Average minimum edit distance of POSes between adjacent sentences'] = min_edit_pos
+    dict_to_put['Average minimum edit distance of lemmas between adjacent sentences'] = min_edit_lemma
+    dict_to_put['Average minimum edit distance of words between adjacent sentences'] = min_edit_word
   return dict_to_put
 
 def word_information(text,stanza_output,dict_to_put):

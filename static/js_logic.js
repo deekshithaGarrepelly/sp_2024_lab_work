@@ -747,10 +747,6 @@ function analyzeEnteredText()
             results_str+=" : ";
             results_str+=dict_metrics[x];
             results_str+="<br/>";
-            /*results_str += key;
-            results_str+=" : ";
-            results_str+=value;
-            results_str+="<br/>";*/
           }
           document.getElementsByClassName('loader')[0].style.display = "none";
           document.getElementById('results_metrics').innerHTML = results_str;

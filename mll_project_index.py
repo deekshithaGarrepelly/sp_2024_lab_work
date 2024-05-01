@@ -34,22 +34,6 @@ all_books = []
 nlp = None
 pipe_stanza = stanza.Pipeline(lang='es', processors='tokenize,pos,lemma,constituency',download_method=DownloadMethod.REUSE_RESOURCES)
 textstat.set_lang('es')
-funs_to_call = []
-values_coh_metrics = ['number_of_words','number_of_sentences','number_of_paras','mean_len_paras',
-                      'std_mean_len_paras','mean_len_sents','std_mean_len_sents','mean_num_sylls',
-                      'mean_num_letters','std_mean_num_letters','noun_overlap_local','noun_overlap_global',
-                      'arg_overlap_local','arg_overlap_global','stem_overlap_local','stem_overlap_global','cwr_overlap_global',
-                      'cwr_overlap_local',
-                      'lsa_adj','ttr_cwr','mod_per_np','syn_med_pos','syn_med_wrd','syn_med_lemmas','syn_sim_adj',
-                      'noun_incidence','verb_incidence','adj_incidence','adv_incidence','avg_freq_cwr','avg_freq_all','avg_freq_min',
-                      'polysemy','hypernymy','flesch_reading_ease','flesch_kincaid']
-dict_coh_metrics = {}
-mapping_values_text = {}
-start = 0
-for x in values_coh_metrics:
-  dict_coh_metrics[x] = start
-  start = start + 1
-print(f"dict_coh_metrics : {dict_coh_metrics}")
 stop_spanish = set(stopwords.words('spanish'))
 
 @app.route('/')

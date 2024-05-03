@@ -36,10 +36,23 @@ var field_name_mappings = {
 };
 var total_len;
 var last_page_num;
-var results_desc = ["Number of words","Number of sentences","Mean number of letters in words","Standard deviation of mean number of letters in words",
-"Mean number of syllables per word","Standard deviation of mean number of syllables in words","Number of Paragraphs","Mean length of Paragraphs",
-"Standard deviation of Mean length of Paragraphs"];
-var results_ref = ["Noun overlap local","Noun overlap global","Local stem overlap","Global stem overlap","Argument overlap local","Argument overlap global","Content word overlap local","Content word overlap global"];
+var results_desc = ["Number of words","Number of sentences","Number of Paragraphs",
+"Mean length of paragraphs","Standard deviation of mean length of paras","Mean length of sentences",
+"Standard deviation of mean length of sentences","Mean number of syllables","Standard deviation of mean number of syllables",
+"Mean number of letters in words","Standard deviation of mean number of letters in words"];
+var results_ref = ["Noun overlap adjacent","Argument overlap adjacent",
+"Stem overlap adjacent","Content word overlap adjacent",
+"Content word overlap global",
+"Global noun overlap","Global stem overlap",
+"Global argument overlap"];
+var lsa_feats = ["Latent semantic analysis adjacent"];
+var lexical_diversity_feats = ["Type token ratio for all words","Type token ratio for content words"];
+var syntactic_complexity = ["Average minimum edit distance of POSes between adjacent sentences",
+"Average minimum edit distance of lemmas between adjacent sentences","Average minimum edit distance of words between adjacent sentences"];
+var word_info_feats = ["Minimum average frequency of words in all sentences",
+"Average frequency of all words","Average frequency of content words","Average polysemy of content words",
+"Noun incidence average","Verb incidence average","Adverb incidence average","Adjective incidence average",
+"Flesch reading ease","Flesch kincaid grade level"];
 function handleChange(event, value) {
   event.target.value = value;
 }
@@ -724,13 +737,58 @@ function analyzeEnteredText()
         contentType:"application/json",
         success:function(res){
           dict_metrics = res;
-          console.log("dict_metrics is "+JSON.stringify(dict_metrics));
           results_str = "<br/>"
-          results_str+="Computed Metrics : ";
+          results_str+="<b>Results : </b>";
           results_str+="<br/>";
-          for(var x in dict_metrics)
+          results_str+="<b>Descriptive metrics : </b>";
+          results_str+="<br/>";
+          for(var x in results_desc)
           {
-            console.log("x : "+dict_metrics[x]);
+            results_str+=x;
+            results_str+=" : ";
+            results_str+=dict_metrics[x];
+            results_str+="<br/>";
+          }
+          results_str+="<b>Referential cohesion metrics</b>";
+          results_str+="<br/>";
+          for(var x in results_ref)
+          {
+            results_str+=x;
+            results_str+=" : ";
+            results_str+=dict_metrics[x];
+            results_str+="<br/>";
+          }
+          results_str+="<b>Latent semantic analysis metrics</b>";
+          results_str+="<br/>";
+          for(var x in lsa_feats)
+          {
+            results_str+=x;
+            results_str+=" : ";
+            results_str+=dict_metrics[x];
+            results_str+="<br/>";
+          }
+          results_str+="<b>Lexical diversity metrics</b>";
+          results_str+="<br/>";
+          for(var x in lexical_diversity_feats)
+          {
+            results_str+=x;
+            results_str+=" : ";
+            results_str+=dict_metrics[x];
+            results_str+="<br/>";
+          }
+          results_str+="<b>Syntactic complexity metrics</b>";
+          results_str+="<br/>";
+          for(var x in syntactic_complexity)
+          {
+            results_str+=x;
+            results_str+=" : ";
+            results_str+=dict_metrics[x];
+            results_str+="<br/>";
+          }
+          results_str+="<b>Word Information</b>";
+          results_str+="<br/>";
+          for(var x in word_info_feats)
+          {
             results_str+=x;
             results_str+=" : ";
             results_str+=dict_metrics[x];

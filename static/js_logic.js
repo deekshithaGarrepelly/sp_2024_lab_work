@@ -742,56 +742,56 @@ function analyzeEnteredText()
           results_str+="<br/>";
           results_str+="<b>Descriptive metrics : </b>";
           results_str+="<br/>";
-          for(var x in results_desc)
+          for(var i=0; i<results_desc.length;i++)
           {
-            results_str+=x;
+            results_str+=results_desc[i];
             results_str+=" : ";
-            results_str+=dict_metrics[x];
+            results_str+=dict_metrics[results_desc[i]];
             results_str+="<br/>";
           }
           results_str+="<b>Referential cohesion metrics</b>";
           results_str+="<br/>";
-          for(var x in results_ref)
+          for(var i=0; i<results_ref.length;i++)
           {
-            results_str+=x;
+            results_str+=results_ref[i];
             results_str+=" : ";
-            results_str+=dict_metrics[x];
+            results_str+=dict_metrics[results_ref[i]];
             results_str+="<br/>";
           }
           results_str+="<b>Latent semantic analysis metrics</b>";
           results_str+="<br/>";
-          for(var x in lsa_feats)
+          for(var i=0;i<lsa_feats;i++)
           {
-            results_str+=x;
+            results_str+=lsa_feats[i];
             results_str+=" : ";
-            results_str+=dict_metrics[x];
+            results_str+=dict_metrics[lsa_feats[i]];
             results_str+="<br/>";
           }
           results_str+="<b>Lexical diversity metrics</b>";
           results_str+="<br/>";
-          for(var x in lexical_diversity_feats)
+          for(var i=0; i<lexical_diversity_feats.length;i++)
           {
-            results_str+=x;
+            results_str+=lexical_diversity_feats[i];
             results_str+=" : ";
-            results_str+=dict_metrics[x];
+            results_str+=dict_metrics[lexical_diversity_feats[i]];
             results_str+="<br/>";
           }
           results_str+="<b>Syntactic complexity metrics</b>";
           results_str+="<br/>";
-          for(var x in syntactic_complexity)
+          for(var i=0; i<syntactic_complexity.length;i++)
           {
-            results_str+=x;
+            results_str+=syntactic_complexity[i];
             results_str+=" : ";
-            results_str+=dict_metrics[x];
+            results_str+=dict_metrics[syntactic_complexity[i]];
             results_str+="<br/>";
           }
           results_str+="<b>Word Information</b>";
           results_str+="<br/>";
-          for(var x in word_info_feats)
+          for(var i=0; i<word_info_feats.length;i++)
           {
-            results_str+=x;
+            results_str+=word_info_feats[i];
             results_str+=" : ";
-            results_str+=dict_metrics[x];
+            results_str+=dict_metrics[word_info_feats[i]];
             results_str+="<br/>";
           }
           document.getElementsByClassName('loader')[0].style.display = "none";

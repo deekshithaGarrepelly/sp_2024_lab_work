@@ -272,7 +272,7 @@ def compute_ref_adj(text,stanza_output,dict_to_put):
       if len(curr_args.intersection(prev_args)) > 0:
         arg_overlap_adj+=1
       if len(curr_nouns_stems.intersection(prev_stems)) > 0:
-        stems_overlap_adj+=1
+        stem_overlap_adj+=1
       curr_cwr_overlap = 0
       for x in curr_cwrs:
         if x in prev_cwrs:
@@ -395,7 +395,7 @@ def compute_ref_global(text,stanza_output,dict_to_put):
           found_arg_overlap = True
           all_args[x] = all_args[x] + curr_args[x]
         else:
-          all_args[x] = all_args[x] + curr_args[x]
+          all_args[x] = curr_args[x]
       if found_arg_overlap:
         arg_overlap_global+=1
       #content words

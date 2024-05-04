@@ -2,11 +2,11 @@ var selected_book;
 var all_results;
 var all_results_list;
 var curr_book_data;
-const descriptive_coh_metrics = ["mean_len_of_paras", "mean_num_of_letters_in_words", "mean_num_words_per_sent", "num_of_paras", "num_of_sentences", "num_words"]
-const referential_cohesion_metrics = ["local_argument_overlap", "local_content_word_overlap", "local_noun_overlap", "local_stem_overlap"]
-const word_information = ["adj_incidence", "adverb_incidence", "content_word_incidence", "noun_incidence", "verb_incidence"]
-const lexical_diversity = ["content_ttr", "ttr"]
-const syn_complexity_feats = ["min_edit_dist_lemma", "min_edit_dist_pos", "min_edit_dist_sent"]
+const descriptive_coh_metrics = ["mean_len_of_paras", "mean_num_of_letters_in_words", "mean_num_words_per_sent", "num_of_paras", "num_of_sentences", "num_words"];
+const referential_cohesion_metrics = ["local_argument_overlap", "local_content_word_overlap", "local_noun_overlap", "local_stem_overlap"];
+const word_information = ["adj_incidence", "adverb_incidence", "content_word_incidence", "noun_incidence", "verb_incidence"];
+const lexical_diversity = ["content_ttr", "ttr"];
+const syn_complexity_feats = ["min_edit_dist_lemma", "min_edit_dist_pos", "min_edit_dist_sent"];
 const other_feats = ["gradelevel"];
 var search_results = [];
 var search_results_len = 0;

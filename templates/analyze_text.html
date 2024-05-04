@@ -18,6 +18,19 @@
                 <td><textarea id="entered_text" maxlength="2000" name="text_to_analyze" rows="10" columns="20" style="resize:none;"></textarea></td>
             </tr>
             <tr>
+                <td>or</td>
+            </tr>
+            <tr>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Upload a file that needs to be analyzed</td>
+                <td><input type="file" name="file_to_analyze" id="file_to_analyze" accept=".pdf,.txt" onchange="handleFileChange()"></input></td>
+            </tr>
+            <tr>
+                <td></td>
+            </tr>
+            <tr>
                 <td></td>
                 <td><input type="button" value="Analyze the text" onclick="analyzeEnteredText()"/></td>
             </tr>

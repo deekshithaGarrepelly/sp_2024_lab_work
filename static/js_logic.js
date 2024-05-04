@@ -53,6 +53,52 @@ var word_info_feats = ["Minimum average frequency of words in all sentences",
 "Average frequency of all words","Average frequency of content words","Average polysemy of content words",
 "Noun incidence average","Verb incidence average","Adverb incidence average","Adjective incidence average",
 "Flesch reading ease","Flesch kincaid grade level"];
+var fileContent = "";
+var text_to_send="";
+function handleFileChange(){
+  input = document.getElementById('file_to_analyze');
+  file = input.files[0];
+  file_name_regex = /.*[.pdf|.txt]$/;
+  console.log("file name matches regex : "+file_name_regex.test(file.name));
+  console.log("file name is "+file.name);
+  if(file_name_regex.test(file.name)==false)
+    alert("Only .pdf,.txt files are accepted");
+  if(file.name.includes(".pdf"))
+  {
+    var form_data = new FormData();
+    console.log("is file undefined here : "+file);
+    form_data.append('file', file);
+    $.ajax(
+      {
+        url:'/extractPDFContents',
+        method : 'POST',
+        cache : false,
+        processData : false,
+        data : form_data,
+        contentType : false,
+        success:function(res){
+          fileContent = res;
+          console.log("fileContent is : "+fileContent);
+          if(fileContent.length == 0 || undefined==fileContent)
+            alert("File is in unreadable format. Try uploading in a readable format.");
+        }
+      }
+    )
+  }
+  else{
+  const reader = new FileReader();
+  
+  reader.onload = function() {
+
+    const contents = reader.result;
+    fileContent = contents;
+    console.log("fileContents are : "+fileContent);
+  };
+  //reader.readAsDataURL(file);
+  reader.readAsText(file);
+}
+}
+
 function handleChange(event, value) {
   event.target.value = value;
 }
@@ -423,7 +469,7 @@ function handleLoad() {
 function getVocabData(dictOfValues) {
   var vocab_str = "";
   nouns_list = dictOfValues['NOUNS'];
-  if (nouns_list != undefined) {
+  if (nouns_list != undefined && nouns_list.length > 0) {
     vocab_str += "<b>Top 25 Nouns</b>";
     vocab_str += "<br/>";
     for (var i = 0; i < nouns_list.length; i++) {
@@ -432,7 +478,7 @@ function getVocabData(dictOfValues) {
     }
   }
   verbs_list = dictOfValues['VERB'];
-  if (undefined != verbs_list) {
+  if (undefined != verbs_list && verbs_list.length > 0) {
     vocab_str += "<b> Top 25 Verbs</b>";
     vocab_str += "<br/>";
     for (var i = 0; i < verbs_list.length; i++) {
@@ -441,7 +487,7 @@ function getVocabData(dictOfValues) {
     }
   }
   adj_list = dictOfValues['ADJ'];
-  if (undefined != adj_list) {
+  if (undefined != adj_list && adj_list.length > 0) {
     vocab_str += "<b> Top 25 Adjectives</b>";
     vocab_str += "<br/>";
     for (var i = 0; i < adj_list.length; i++) {
@@ -454,7 +500,7 @@ function getVocabData(dictOfValues) {
 function getCollocationsData(dictOfValues) {
   collocation_str = "";
   bigrams = dictOfValues['bigrams'];
-  if (undefined != bigrams) {
+  if (undefined != bigrams && bigrams.length>0) {
     collocation_str += "Top 25 bigrams : ";
     collocation_str += "<br/>";
     for (var i = 0; i < bigrams.length; i++) {
@@ -463,7 +509,7 @@ function getCollocationsData(dictOfValues) {
     }
   }
   trigrams = dictOfValues['trigrams'];
-  if (undefined != trigrams) {
+  if (undefined != trigrams && trigrams.length > 0) {
     collocation_str += "Top 25 trigrams : ";
     collocation_str += "<br/>";
     for (var i = 0; i < trigrams.length; i++) {
@@ -472,7 +518,8 @@ function getCollocationsData(dictOfValues) {
     }
   }
   quadrgrams = dictOfValues['quadrgrams'];
-  if (undefined != quadrgrams) {
+  console.log("length of quadrgrams : "+quadrgrams.length);
+  if (undefined != quadrgrams && quadrgrams.length > 0) {
     collocation_str += "Top 25 quadrgrams : ";
     collocation_str += "<br/>";
     for (var i = 0; i < quadrgrams.length; i++) {
@@ -485,12 +532,6 @@ function getCollocationsData(dictOfValues) {
 function handleBookSelection(event) {
   selected_book = event.target.value;
   document.getElementById('selected_book_name').innerHTML = event.target.value;
-  let descriptive_metrics_data = "";
-  let referntiatial_metrics_data = "";
-  let syn_metrics_data = "";
-  let word_info_metrics_data = "";
-  let lexical_diversity_data = "";
-  let other_feats_data = "";
   let vocab_data = "";
 
   if (undefined == all_results) {
@@ -721,18 +762,28 @@ function analyzeEnteredText()
 {
   document.getElementById('results_metrics').innerHTML = "";
   text_entered = document.getElementById('entered_text').value;
-  if(undefined==text_entered || text_entered == "" || text_entered.length==0)
+  console.log("in analyze entered text : "+fileContent);
+  if((undefined==text_entered && undefined==fileContent) || (text_entered == "" && fileContent=="") || (text_entered.length==0 && fileContent.length==0))
   {
-    alert("Enter a text of length > 0 to analyze the texts");
+    alert("Enter a non empty text in the text area or a non empty file that needs to be analyzed");
+  }
+  else if(undefined!=text_entered && undefined!=fileContent && text_entered.length>0 && fileContent.length>0)
+  {
+    alert("Enter either text or upload a file to be analyzed. Not both!");
   }
   else{
     document.getElementsByClassName('loader')[0].style.display = "block";
+    if(undefined!=text_entered && text_entered!="" && text_entered.length>0)
+    text_to_send = text_entered;
+    else
+    text_to_send = fileContent;
+    console.log("in sending : "+text_to_send);
     $.ajax(
       {
         url:"/computeMetrics",
         method : "GET",
         data :{
-          "enteredText":text_entered
+          "enteredText":text_to_send
         },
         contentType:"application/json",
         success:function(res){
@@ -794,6 +845,68 @@ function analyzeEnteredText()
             results_str+=dict_metrics[word_info_feats[i]];
             results_str+="<br/>";
           }
+          results_str+="<br/>";
+          var top_nouns = dict_metrics['Most common nouns'];
+          if(undefined!=top_nouns && top_nouns.length>0){
+          results_str+="<b>Top Nouns</b>";
+          for(var i = 0; i < top_nouns.length; i++)
+          {
+            results_str+=top_nouns[i];
+            results_str+="<br/>";
+          }
+          }
+          var top_verbs = dict_metrics['Most common verbs'];
+          if(undefined!=top_verbs && top_verbs.length > 0){
+          results_str+="<b>Top Verbs</b>";
+          results_str+="<br/>";
+          for(var i = 0; i < top_verbs.length; i++)
+          {
+            results_str+=top_verbs[i];
+            results_str+="<br/>";
+          }
+          }
+          var top_adjectives = dict_metrics['Most common adjectives'];
+          if(undefined!=top_adjectives && top_adjectives.length > 0){
+          results_str+="<b>Top Adjectives</b>";
+          results_str+="<br/>";
+          console.log("top_adjectives : "+top_adjectives.length);
+          for(var i = 0; i < top_adjectives.length;i++)
+          {
+            results_str+=top_adjectives[i];
+            results_str+="<br/>";
+          }
+          }
+          var top_bigrams = dict_metrics['Top bigrams'];
+          if(undefined!=top_bigrams && top_bigrams.length>0){
+          results_str+="<br/>";
+          results_str+="<b>Top bigrams</b>";
+          results_str+="<br/>";
+          for(var i = 0; i < top_bigrams.length;i++)
+          {
+            results_str+=top_bigrams[i];
+            results_str+="<br/>";
+          }
+        }
+          var top_trigrams = dict_metrics['Top trigrams'];
+          if(undefined!=top_trigrams && top_trigrams.length>0){
+          results_str+="<b>Top trigrams</b>";
+          results_str+="<br/>";
+          for(var i = 0; i < top_trigrams.length; i++)
+          {
+            results_str+=top_trigrams[i];
+            results_str+="<br/>";
+          }
+        }
+          var top_quadrgrams = dict_metrics['Top quadrgrams'];
+          if(undefined!=top_quadrgrams && top_quadrgrams.length>0){
+          results_str+="<b>Top Quadrgrams</b>";
+          results_str+="<br/>";
+          for(var i = 0; i <top_quadrgrams.length; i++)
+          {
+            results_str+=top_quadrgrams[i];
+            results_str+="<br/>";
+          }
+        }
           document.getElementsByClassName('loader')[0].style.display = "none";
           document.getElementById('results_metrics').innerHTML = results_str;
         }

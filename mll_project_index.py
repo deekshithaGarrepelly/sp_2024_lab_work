@@ -17,6 +17,9 @@ from nltk.corpus import wordnet as wn
 from nltk.corpus import stopwords
 from collections import Counter
 from Levenshtein import distance
+from pypdf import PdfReader
+from nltk.collocations import *
+import nltk
 app = Flask(__name__)
 uri = "mongodb+srv://deekshitha1425:KQhXiEZaNhoiW606@cluster0.kzjipbi.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 client = MongoClient(uri, server_api=ServerApi('1'))
@@ -161,6 +164,10 @@ def computeMetrics():
   metricsVsValues = lexical_diversity(text,computed_staza,metricsVsValues)
   metricsVsValues = syntactic_complexity(text,computed_staza,metricsVsValues)
   metricsVsValues = word_information(text,computed_staza,metricsVsValues)
+  metricsVsValues = returnTopNouns(text,computed_staza,metricsVsValues)
+  metricsVsValues = returnTopVerbs(text,computed_staza,metricsVsValues)
+  metricsVsValues = returnTopAdjectives(text,computed_staza,metricsVsValues)
+  metricsVsValues = returnTopCollocations(text,computed_staza,metricsVsValues)
   return metricsVsValues
 
 @app.route('/landing_page')
@@ -413,7 +420,8 @@ def compute_ref_global(text,stanza_output,dict_to_put):
           all_cwrs[x] = all_cwrs[x] + curr_cwrs[x]
         else:
           all_cwrs[x] = curr_cwrs[x]
-      cwr_overlap_global+=(cwr_overlap_curr/curr_num_cwrs)  
+      if curr_num_cwrs>0:
+        cwr_overlap_global+=(cwr_overlap_curr/curr_num_cwrs)  
     dict_to_put['Content word overlap global'] = cwr_overlap_global
     dict_to_put['Global noun overlap'] = noun_overlap_global/num_sents
     dict_to_put['Global stem overlap'] = stem_overlap_global/num_sents
@@ -593,6 +601,80 @@ def word_information(text,stanza_output,dict_to_put):
   dict_to_put['Flesch reading ease'] = textstat.flesch_reading_ease(text)
   dict_to_put['Flesch kincaid grade level'] = textstat.flesch_kincaid_grade(text)
   return dict_to_put
+
+@app.route('/extractPDFContents',methods=['POST'])
+def extractPDFContents():
+  file = request.files.get('file')
+  reader = PdfReader(file)
+  extracted_text = ''
+  for page in reader.pages:
+    extracted_text+=page.extract_text()
+  print(f"extracted text is : {extracted_text}")
+  return extracted_text
+
+def returnTopNouns(text,stanza_output,dict_to_put):
+  if len(stanza_output.sentences)>0:
+    all_nouns = []
+    for sent in stanza_output.sentences:
+      for token in sent.words:
+        if token.upos == 'NOUN':
+          all_nouns.append(token.text)
+    counter = Counter(all_nouns).most_common(25)
+    ret_nouns = []
+    for x in counter:
+      ret_nouns.append(x[0])
+    dict_to_put['Most common nouns'] = ret_nouns
+  return dict_to_put
+
+def returnTopVerbs(text,stanza_output,dict_to_put):
+  if len(stanza_output.sentences)>0:
+    all_verbs = []
+    for sent in stanza_output.sentences:
+      for word in sent.words:
+        if word.upos=='VERB':
+          all_verbs.append(word.text)
+    counter_verbs = Counter(all_verbs).most_common(25)
+    verbs_top_25 = []
+    for x in counter_verbs:
+      verbs_top_25.append(x[0])
+    dict_to_put['Most common verbs'] = verbs_top_25
+  return dict_to_put
+
+def returnTopAdjectives(text,stanza_output,dict_to_put):
+  if len(stanza_output.sentences)>0:
+    all_adjs = []
+    for sent in stanza_output.sentences:
+      for word in sent.words:
+        if word.upos == 'ADJ':
+          all_adjs.append(word.text)
+    counter_adjs = Counter(all_adjs).most_common(25)
+    adj_top_25 = []
+    for x in counter_adjs:
+      adj_top_25.append(x[0])
+    dict_to_put['Most common adjectives'] = adj_top_25
+  return dict_to_put
+
+def returnTopCollocations(text,stanza_output,dict_to_put):
+  '''ref : https://www.nltk.org/howto/collocations.html'''
+  bigram_measures = nltk.collocations.BigramAssocMeasures()
+  trigram_measures = nltk.collocations.TrigramAssocMeasures()
+  quadrgrams_measures = nltk.collocations.QuadgramAssocMeasures()
+  tokens = nltk.wordpunct_tokenize(text)
+  finder_bigrams = BigramCollocationFinder.from_words(tokens)
+  ignored_words = stop_spanish
+  finder_bigrams.apply_word_filter(lambda w:w in ignored_words or not(w.isalnum()))
+  scored_bigrams = finder_bigrams.score_ngrams(bigram_measures.raw_freq)
+  dict_to_put['Top bigrams'] = scored_bigrams
+  finder_trigrams = TrigramCollocationFinder.from_words(tokens)
+  finder_trigrams.apply_word_filter(lambda w:w in ignored_words or not(w.isalnum()))
+  scored_trigrams = finder_trigrams.score_ngrams(trigram_measures.raw_freq)
+  dict_to_put['Top trigrams'] = scored_trigrams
+  finder_quadrgrams = QuadgramCollocationFinder.from_words(tokens)
+  finder_quadrgrams.apply_word_filter(lambda w:w in ignored_words or not(w.isalnum()))
+  scored_quadrgrams = finder_quadrgrams.score_ngrams(quadrgrams_measures.raw_freq)
+  dict_to_put['Top quadrgrams'] = scored_quadrgrams
+  return dict_to_put
+
 
 if __name__ == "__main__":
   app.run(debug=True)

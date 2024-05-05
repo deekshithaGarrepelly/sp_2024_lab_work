@@ -1,10 +1,10 @@
-<b>Spanish Lingustic Portal<b>
+Spanish Lingustic Portal
 <br/>
 <b>Install with pip:<b>
 <br/>
 pip install -r requirements.txt
 <br/>
-<b>Flask App structure:<b>
+Flask App structure:
 <br/> 
 ---- templates<br/>
     |-landing_page.html<br/>

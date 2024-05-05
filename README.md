@@ -5,7 +5,7 @@
 pip install -r requirements.txt
 <br/>
 <b>Flask App structure:<b>
-<br/>
+<br/> 
 ---- templates<br/>
     |-landing_page.html<br/>
     |-analyze_text.html<br/>

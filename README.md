@@ -1,6 +1,6 @@
 Spanish Lingustic Portal
 <br/>
-<b>Install with pip:<b>
+Install with pip:
 <br/>
 pip install -r requirements.txt
 <br/>

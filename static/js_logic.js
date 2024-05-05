@@ -48,7 +48,8 @@ var results_ref = ["Noun overlap adjacent","Argument overlap adjacent",
 var lsa_feats = ["Latent semantic analysis adjacent"];
 var lexical_diversity_feats = ["Type token ratio for all words","Type token ratio for content words"];
 var syntactic_complexity = ["Average minimum edit distance of POSes between adjacent sentences",
-"Average minimum edit distance of lemmas between adjacent sentences","Average minimum edit distance of words between adjacent sentences"];
+"Average minimum edit distance of lemmas between adjacent sentences","Average minimum edit distance of words between adjacent sentences",
+"Average proportion of intersection of tree nodes between adjacent sentences"];
 var word_info_feats = ["Minimum average frequency of words in all sentences",
 "Average frequency of all words","Average frequency of content words","Average polysemy of content words",
 "Noun incidence average","Verb incidence average","Adverb incidence average","Adjective incidence average",

@@ -20,6 +20,8 @@ from Levenshtein import distance
 from pypdf import PdfReader
 from nltk.collocations import *
 import nltk
+from nltk.tree import Tree
+import os
 app = Flask(__name__)
 uri = "mongodb+srv://deekshitha1425:KQhXiEZaNhoiW606@cluster0.kzjipbi.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 client = MongoClient(uri, server_api=ServerApi('1'))
@@ -470,12 +472,14 @@ def syntactic_complexity(text,stanza_output,dict_to_put):
   min_edit_pos = 0
   min_edit_word = 0
   min_edit_lemma = 0
+  prop_int_tree_nodes = 0
   num_sents = len(stanza_output.sentences)
   if num_sents>1:
     sent_0 = stanza_output.sentences[0]
     prev_words = []
     prev_lemmas = []
     prev_poses = []
+    prev_sent_productions = Tree.fromstring(str(sent_0.constituency)).productions()
     for word in sent_0.words:
       prev_words.append(word.text)
       prev_lemmas.append(word.lemma)
@@ -485,6 +489,12 @@ def syntactic_complexity(text,stanza_output,dict_to_put):
       curr_words = []
       curr_lemmas = []
       curr_poses = []
+      curr_prod_int = 0
+      sent_i_productions = Tree.fromstring(str(sent_i.constituency)).productions()
+      for prod in sent_i_productions:
+        if prod in prev_sent_productions:
+          curr_prod_int+=1
+      prop_int_tree_nodes+=(curr_prod_int/(len(sent_i_productions)))
       for word in sent_i.words:
         curr_words.append(word.text)
         curr_lemmas.append(word.lemma)
@@ -495,12 +505,15 @@ def syntactic_complexity(text,stanza_output,dict_to_put):
       prev_words = curr_words
       prev_lemmas = curr_lemmas
       prev_poses = curr_poses
+      prev_sent_productions = sent_i_productions
     min_edit_pos/=num_sents
     min_edit_word/=num_sents
     min_edit_lemma/=num_sents
+    prop_int_tree_nodes/=num_sents
     dict_to_put['Average minimum edit distance of POSes between adjacent sentences'] = min_edit_pos
     dict_to_put['Average minimum edit distance of lemmas between adjacent sentences'] = min_edit_lemma
     dict_to_put['Average minimum edit distance of words between adjacent sentences'] = min_edit_word
+    dict_to_put['Average proportion of intersection of tree nodes between adjacent sentences'] = prop_int_tree_nodes
   return dict_to_put
 
 def word_information(text,stanza_output,dict_to_put):
@@ -664,15 +677,25 @@ def returnTopCollocations(text,stanza_output,dict_to_put):
   ignored_words = stop_spanish
   finder_bigrams.apply_word_filter(lambda w:w in ignored_words or not(w.isalnum()))
   scored_bigrams = finder_bigrams.score_ngrams(bigram_measures.raw_freq)
-  dict_to_put['Top bigrams'] = scored_bigrams
+  bigrams = []
+  for x in scored_bigrams:
+    bigrams.append(x[0])
+  dict_to_put['Top bigrams'] = bigrams
   finder_trigrams = TrigramCollocationFinder.from_words(tokens)
   finder_trigrams.apply_word_filter(lambda w:w in ignored_words or not(w.isalnum()))
   scored_trigrams = finder_trigrams.score_ngrams(trigram_measures.raw_freq)
-  dict_to_put['Top trigrams'] = scored_trigrams
+  trigrams = []
+  for x in scored_trigrams:
+    trigrams.append(x[0])
+  dict_to_put['Top trigrams'] = trigrams
   finder_quadrgrams = QuadgramCollocationFinder.from_words(tokens)
   finder_quadrgrams.apply_word_filter(lambda w:w in ignored_words or not(w.isalnum()))
   scored_quadrgrams = finder_quadrgrams.score_ngrams(quadrgrams_measures.raw_freq)
-  dict_to_put['Top quadrgrams'] = scored_quadrgrams
+  quadrgrams = []
+  for x in scored_quadrgrams:
+    quadrgrams.append(x[0])
+  print(f"scored_quadrgrams : {quadrgrams}")
+  dict_to_put['Top quadrgrams'] = quadrgrams
   return dict_to_put
 
 

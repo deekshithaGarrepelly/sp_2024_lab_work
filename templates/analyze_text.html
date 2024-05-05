@@ -12,6 +12,8 @@
     <body style="overflow: scroll;">
         {%include "header.html"%}
         <div class="app" style="overflow: scroll;">
+        <div class="row">
+        <div class="column" style="background-color:#aaa;">
         <table>
             <tr>
                 <td>Enter text in the box below to analyze</td>
@@ -35,10 +37,14 @@
                 <td><input type="button" value="Analyze the text" onclick="analyzeEnteredText()"/></td>
             </tr>
         </table>
+    </div>
+    <div class="column2" style="background-color:#aaa;">
         <div class="loader"></div>
         <p id="results_metrics">
 
         </p>
+    </div>
+    </div>
     </div>
     </body>
 </html>

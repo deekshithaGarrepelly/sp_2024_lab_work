@@ -811,7 +811,7 @@ function analyzeEnteredText()
           }
           results_str+="<b>Latent semantic analysis metrics</b>";
           results_str+="<br/>";
-          for(var i=0;i<lsa_feats;i++)
+          for(var i=0;i<lsa_feats.length;i++)
           {
             results_str+=lsa_feats[i];
             results_str+=" : ";
